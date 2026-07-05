@@ -280,10 +280,12 @@ export function Fireworks({
   active,
   intensity = 1,
   mobileReduced = false,
+  mobileBoost = false,
 }: {
   active: boolean;
   intensity?: number;
   mobileReduced?: boolean;
+  mobileBoost?: boolean;
 }) {
   const coreRef = useRef<THREE.Points>(null);
   const sparkleRef = useRef<THREE.Points>(null);
@@ -296,8 +298,10 @@ export function Fireworks({
   const pointLightRef = useRef<THREE.PointLight>(null);
   const intensityRef = useRef(intensity);
   const mobileRef = useRef(mobileReduced);
+  const mobileBoostRef = useRef(mobileBoost);
   intensityRef.current = Math.max(0.15, Math.min(1, intensity));
   mobileRef.current = mobileReduced;
+  mobileBoostRef.current = mobileBoost;
 
   const { coreGeo, sparkleGeo, glowGeo, coreMat, sparkleMat, glowMat } = useMemo(() => {
     const mkGeo = (withSize = false) => {
@@ -356,32 +360,51 @@ export function Fireworks({
     if (!coreRef.current || !sparkleRef.current || !glowRef.current) return;
 
     const mobile = mobileRef.current;
-    const level = intensityRef.current * (mobile ? 0.68 : 1);
-    coreMat.opacity = 0.25 + level * 0.45;
-    sparkleMat.opacity = 0.2 + level * 0.4;
-    glowMat.opacity = 0.08 + level * 0.18;
+    const boosted = mobileBoostRef.current;
+    const level = intensityRef.current * (mobile ? 0.68 : boosted ? 1.12 : 1);
+
+    if (boosted) {
+      coreMat.size = 0.2;
+      sparkleMat.size = 0.34;
+      glowMat.size = 0.58;
+      coreMat.opacity = 0.45 + level * 0.5;
+      sparkleMat.opacity = 0.38 + level * 0.45;
+      glowMat.opacity = 0.16 + level * 0.22;
+    } else {
+      coreMat.size = 0.12;
+      sparkleMat.size = 0.22;
+      glowMat.size = 0.4;
+      coreMat.opacity = 0.25 + level * 0.45;
+      sparkleMat.opacity = 0.2 + level * 0.4;
+      glowMat.opacity = 0.08 + level * 0.18;
+    }
 
     if (active) {
       spawnTimer.current += delta;
       finaleTimer.current += delta;
 
-      const maxRockets = mobile
-        ? Math.max(2, Math.round(4.5 * level))
-        : Math.max(2, Math.round(9 * level));
-      const spawnDelay = mobile
-        ? 0.42 + (0.95 - level * 0.45) + Math.random() * 0.4
-        : 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
+      const maxRockets = boosted
+        ? Math.max(4, Math.round(8 * level))
+        : mobile
+          ? Math.max(2, Math.round(4.5 * level))
+          : Math.max(2, Math.round(9 * level));
+      const spawnDelay = boosted
+        ? 0.28 + (0.7 - level * 0.35) + Math.random() * 0.28
+        : mobile
+          ? 0.42 + (0.95 - level * 0.45) + Math.random() * 0.4
+          : 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
 
       if (spawnTimer.current > spawnDelay && rocketsRef.current.length < maxRockets) {
         spawnTimer.current = 0;
         rocketsRef.current.push(spawnRocket(undefined, 0.35 + level * 0.45));
       }
 
-      if (!mobile && level > 0.65 && finaleTimer.current > 6.5) {
+      if ((!mobile || boosted) && level > 0.55 && finaleTimer.current > (boosted ? 5.2 : 6.5)) {
         finaleTimer.current = 0;
-        [-10, -5, 5, 10].forEach((fx, i) => {
+        const offsets = boosted ? [-6, 0, 6] : [-10, -5, 5, 10];
+        offsets.forEach((fx, i) => {
           window.setTimeout(
-            () => rocketsRef.current.push(spawnRocket(fx, 0.7 + level * 0.4)),
+            () => rocketsRef.current.push(spawnRocket(fx, (boosted ? 0.82 : 0.7) + level * 0.4)),
             i * 90,
           );
         });

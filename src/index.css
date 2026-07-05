@@ -75,6 +75,17 @@ button {
   height: 100% !important;
 }
 
+@media (max-width: 768px) and (orientation: portrait) {
+  .fireworks-layer canvas {
+    mix-blend-mode: screen;
+  }
+
+  .celebration-layer .confetti-canvas {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 .confetti-canvas {
   position: absolute;
   inset: 0;

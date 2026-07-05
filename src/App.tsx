@@ -14,6 +14,7 @@ import {
   fireworkIntervalMs,
   fireworkVolume,
   scaleCelebrationForMobile,
+  scaleFireworksForMobile,
 } from "./utils/celebrationIntensity";
 
 const DEFAULT_IMAGES: Record<string, string> = Object.fromEntries([
@@ -60,6 +61,7 @@ export default function App() {
   }, []);
 
   const effectiveIntensity = scaleCelebrationForMobile(celebrationIntensity, isPortraitMobile);
+  const fireworksIntensity = scaleFireworksForMobile(celebrationIntensity, isPortraitMobile);
 
   useEffect(() => {
     if (!started || startedAtRef.current === null || isFinale) return;
@@ -84,7 +86,7 @@ export default function App() {
     const schedule = () => {
       if (cancelled) return;
 
-      const intensity = scaleCelebrationForMobile(
+      const intensity = scaleFireworksForMobile(
         computeCelebrationIntensity(startedAtRef.current!, Date.now(), step),
         isPortraitMobile,
       );
@@ -164,7 +166,7 @@ export default function App() {
               subtle={isPortraitMobile}
             />
           </div>
-          <FireworksOverlay active={showFireworks} intensity={effectiveIntensity} />
+          <FireworksOverlay active={showFireworks} intensity={fireworksIntensity} />
         </>
       )}
 

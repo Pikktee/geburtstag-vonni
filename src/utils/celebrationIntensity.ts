@@ -19,12 +19,18 @@ export function computeCelebrationIntensity(
   return Math.max(MIN_INTENSITY, Math.min(MAX_INTENSITY, intensity));
 }
 
-/** Mobile Hochformat: sichtbar durch die Karte, Text bleibt lesbar. */
+/** Konfetti — dezent auf Mobile. */
 export const MOBILE_CELEBRATION_SCALE = 0.58;
 
 export function scaleCelebrationForMobile(intensity: number, isMobile: boolean): number {
   if (!isMobile) return intensity;
   return Math.max(0.14, intensity * MOBILE_CELEBRATION_SCALE);
+}
+
+/** Feuerwerk — auf Mobile bewusst nicht abschwächen. */
+export function scaleFireworksForMobile(intensity: number, isMobile: boolean): number {
+  if (!isMobile) return intensity;
+  return Math.max(0.72, Math.min(1, intensity * 1.05));
 }
 
 export function fireworkIntervalMs(

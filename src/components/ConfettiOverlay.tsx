@@ -234,8 +234,8 @@ export function ConfettiOverlay({ active, burst, intensity = 1, subtle = false }
 
   return (
     <>
-      <canvas ref={canvasRef} className="confetti-canvas" aria-hidden />
-      <FallingParticles active={active} intensity={level} subtle={subtle} />
+      {!subtle && <canvas ref={canvasRef} className="confetti-canvas" aria-hidden />}
+      {!subtle && <FallingParticles active={active} intensity={level} subtle={subtle} />}
     </>
   );
 };
