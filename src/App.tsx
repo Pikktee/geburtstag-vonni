@@ -240,7 +240,7 @@ export default function App() {
       )}
 
       {started && (
-        <div className={`ui-layer${showFireworks ? " ui-layer--celebrating" : ""}`}>
+        <div className={`ui-layer${showFireworks ? " ui-layer--celebrating" : ""}${isFinale ? " ui-layer--finale" : ""}`}>
           <GiftFlow
             step={step}
             onStepChange={setStep}

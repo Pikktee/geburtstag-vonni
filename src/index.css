@@ -451,6 +451,11 @@ button {
     touch-action: pan-y;
   }
 
+  .ui-layer--finale {
+    overflow: hidden;
+    touch-action: none;
+  }
+
   .gift-flow {
     justify-content: flex-start;
     min-height: auto;
@@ -1779,12 +1784,12 @@ button {
 
 @media (max-width: 768px) {
   .finale-screen {
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    align-items: flex-start;
-    padding-top: calc(var(--marquee-height, 2.35rem) + 0.75rem);
-    padding-bottom: 1.5rem;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem max(1rem, env(safe-area-inset-bottom, 0px));
+    touch-action: none;
+    overscroll-behavior: none;
   }
 
   .finale-screen__ring--outer {
@@ -1819,6 +1824,7 @@ button {
   }
 
   .finale-screen__content {
-    margin-top: min(8vh, 3.5rem);
+    margin-top: 0;
+    padding: 1.15rem 0.95rem;
   }
 }
