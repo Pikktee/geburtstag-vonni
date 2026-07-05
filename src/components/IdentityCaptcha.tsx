@@ -228,9 +228,7 @@ function CaptchaPuzzleStep({
 
       <div className="captcha-step__footer">
         <span className="captcha-step__attempts">Fehlversuche: {attemptCount}</span>
-        <span className="captcha-step__brand" style={{ color: theme.accent }}>
-          reCAPTCHA
-        </span>
+        <span className="captcha-step__brand">reCAPTCHA</span>
       </div>
 
       {error && (
@@ -332,7 +330,6 @@ function CaptchaStep({
             animate={{ opacity: 1, y: 0 }}
             type="button"
             className="captcha-step__help"
-            style={{ color: theme.accent, borderColor: theme.border }}
             onClick={() => setHelpDialogOpen(true)}
           >
             {question.helpButtonLabel}
@@ -342,9 +339,7 @@ function CaptchaStep({
 
       <div className="captcha-step__footer">
         <span className="captcha-step__attempts">Fehlversuche: {attemptCount}</span>
-        <span className="captcha-step__brand" style={{ color: theme.accent }}>
-          reCAPTCHA
-        </span>
+        <span className="captcha-step__brand">reCAPTCHA</span>
       </div>
 
       {error && (

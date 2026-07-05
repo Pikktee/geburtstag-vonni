@@ -1079,7 +1079,18 @@ button {
 }
 
 .ui-layer--celebrating .captcha-step__header {
-  background: rgba(238, 243, 251, 0.48) !important;
+  background: #f6f7fb !important;
+  color: #12122a !important;
+  border-bottom-color: rgba(18, 18, 42, 0.14) !important;
+}
+
+.ui-layer--celebrating .captcha-step__badge {
+  color: #12122a !important;
+}
+
+.ui-layer--celebrating .captcha-step__ref {
+  color: #3a3a58 !important;
+  opacity: 1;
 }
 
 .ui-layer--celebrating .captcha-step__visual {
@@ -1133,7 +1144,17 @@ button {
   }
 
   .ui-layer--celebrating .captcha-step__header {
-    background: rgba(238, 243, 251, 0.38) !important;
+    background: #fafbfd !important;
+    color: #0e0e24 !important;
+  }
+
+  .ui-layer--celebrating .captcha-step__badge {
+    color: #0e0e24 !important;
+  }
+
+  .ui-layer--celebrating .captcha-step__ref {
+    color: #2e2e48 !important;
+    opacity: 1;
   }
 
   .ui-layer--celebrating .captcha-step__visual {
@@ -1151,15 +1172,19 @@ button {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  background: #f4f6fa;
+  color: #141428;
 }
 
 .captcha-step__badge {
   font-family: var(--font-display);
+  color: inherit;
 }
 
 .captcha-step__ref {
-  opacity: 0.65;
   font-family: monospace;
+  color: #3d3d58;
+  opacity: 1;
 }
 
 .captcha-step__visual {
@@ -1228,19 +1253,30 @@ button {
   display: block;
   width: 100%;
   margin-top: 0.55rem;
-  padding: 0.45rem 0.65rem;
-  border: 1px dashed;
+  padding: 0.55rem 0.7rem;
+  border: 2px dashed var(--scam-yellow);
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.55);
+  background: #fffef8;
+  color: #1a0a30;
   font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-style: italic;
+  font-size: clamp(0.84rem, 3.2vw, 0.92rem);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.35;
   cursor: pointer;
-  transition: background 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .captcha-step__help:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: #fff;
+  transform: scale(1.01);
+}
+
+.ui-layer--celebrating .captcha-step__help {
+  background: #fffef8;
+  color: #14082a;
+  border-color: var(--scam-yellow);
 }
 
 .captcha-dialog-backdrop {
@@ -1329,14 +1365,21 @@ button {
   align-items: center;
   padding: 0.55rem 0.75rem 0;
   font-size: 0.68rem;
-  color: #555;
+  color: #d8cce8;
+}
+
+.captcha-step__attempts {
+  color: inherit;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
 }
 
 .captcha-step__brand {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  opacity: 0.75;
+  color: var(--scam-yellow);
+  opacity: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
 }
 
 .captcha-step__error {
