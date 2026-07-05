@@ -1,41 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { LOCATION_IMAGES } from "../types";
 import { LOCATION_META } from "../config/locations";
 
-const SLIDE_MS = 620;
+const COUNTDOWN_NUMBERS = [5, 4, 3, 2, 1] as const;
+const TICK_MS = 900;
 
 interface MobileDestinationMontageProps {
   imagePaths: Record<string, string>;
   onComplete: () => void;
-  onSlideReveal?: (slideIndex: number) => void;
+  onCountdownTick?: (value: (typeof COUNTDOWN_NUMBERS)[number]) => void;
 }
 
 export function MobileDestinationMontage({
   imagePaths,
   onComplete,
-  onSlideReveal,
+  onCountdownTick,
 }: MobileDestinationMontageProps) {
-  const [index, setIndex] = useState(0);
+  const [step, setStep] = useState(0);
+  const tickPlayedRef = useRef(-1);
   const total = LOCATION_IMAGES.length;
-  const done = index >= total;
-  const currentId = !done ? LOCATION_IMAGES[index] : null;
-  const remaining = total - index;
-  const countdownLabel = done ? "LOS!!!" : String(remaining);
+  const finished = step >= COUNTDOWN_NUMBERS.length;
+  const countdownValue = finished ? null : COUNTDOWN_NUMBERS[step];
+  const imageIndex = Math.min(step, total - 1);
+  const currentId = finished ? null : LOCATION_IMAGES[imageIndex];
 
   useEffect(() => {
-    if (done) return;
-    onSlideReveal?.(index);
-  }, [index, done, onSlideReveal]);
-
-  useEffect(() => {
-    if (done) {
-      const id = window.setTimeout(onComplete, 480);
+    if (finished) {
+      const id = window.setTimeout(onComplete, 320);
       return () => window.clearTimeout(id);
     }
-    const id = window.setTimeout(() => setIndex((i) => i + 1), SLIDE_MS);
+
+    if (tickPlayedRef.current !== step) {
+      tickPlayedRef.current = step;
+      onCountdownTick?.(COUNTDOWN_NUMBERS[step]);
+    }
+
+    const id = window.setTimeout(() => setStep((s) => s + 1), TICK_MS);
     return () => window.clearTimeout(id);
-  }, [index, done, onComplete]);
+  }, [step, finished, onComplete, onCountdownTick]);
 
   return (
     <div className="mobile-montage" role="dialog" aria-label="Geheime Reiseziele">
@@ -64,29 +67,22 @@ export function MobileDestinationMontage({
         )}
       </AnimatePresence>
 
-      <div className="mobile-montage__countdown" aria-live="polite" aria-atomic="true">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={countdownLabel}
-            className="mobile-montage__countdown-burst"
-            initial={{ scale: 0.25, rotate: -14, opacity: 0 }}
-            animate={{ scale: 1, rotate: 0, opacity: 1 }}
-            exit={{ scale: 1.35, rotate: 8, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 520, damping: 16 }}
-          >
-            <span
-              className={`mobile-montage__countdown-num${done ? " mobile-montage__countdown-num--go" : ""}`}
+      {countdownValue !== null && (
+        <div className="mobile-montage__countdown" aria-live="polite" aria-atomic="true">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={countdownValue}
+              className="mobile-montage__countdown-num"
+              initial={{ scale: 0.15, rotate: -18, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 1.25, rotate: 10, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 560, damping: 17 }}
             >
-              {countdownLabel}
-            </span>
-            {!done && (
-              <span className="mobile-montage__countdown-label blink">
-                {remaining === 1 ? "LETZTES ZIEL!!!" : "GEHEIME ZIELE ÜBRIG!!!"}
-              </span>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+              {countdownValue}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      )}
 
       <p className="mobile-montage__hint">Wohin geht die Reise? Gleich erfährst du mehr…</p>
     </div>

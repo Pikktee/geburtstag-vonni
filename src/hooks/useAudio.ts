@@ -19,6 +19,7 @@ export const AUDIO_KEYS = [
   "decline-whaaat",
   "decline-zonk",
   "ui-click",
+  "montage-countdown-tick",
 ] as const;
 
 export type AudioKey = (typeof AUDIO_KEYS)[number];
@@ -66,6 +67,7 @@ const DEFAULT_AUDIO: Record<AudioKey, string> = {
   "decline-whaaat": "/assets/audio/decline-whaaat.mp3",
   "decline-zonk": "/assets/audio/decline-zonk.mp3",
   "ui-click": "/assets/audio/ui-click.mp3",
+  "montage-countdown-tick": "/assets/audio/montage-countdown-tick.mp3",
 };
 
 function waitForAudioReady(audio: HTMLAudioElement): Promise<void> {

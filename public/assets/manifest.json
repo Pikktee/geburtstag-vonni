@@ -31,7 +31,8 @@
     "warning-alert": "/assets/audio/warning-alert.mp3",
     "decline-whaaat": "/assets/audio/decline-whaaat.mp3",
     "decline-zonk": "/assets/audio/decline-zonk.mp3",
-    "ui-click": "/assets/audio/ui-click.mp3"
+    "ui-click": "/assets/audio/ui-click.mp3",
+    "montage-countdown-tick": "/assets/audio/montage-countdown-tick.mp3"
   },
-  "generatedAt": "2026-07-05T19:33:22.409Z"
+  "generatedAt": "2026-07-05T20:09:02.995Z"
 }

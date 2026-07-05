@@ -183,6 +183,13 @@ const AUDIO_TARGETS = [
     duration: 0.5,
   },
   {
+    id: "montage-countdown-tick",
+    type: "sfx" as const,
+    prompt:
+      "Funny cartoon countdown tick bloop, bouncy game show number pop, playful retro party boing, exaggerated comedic punch for 5-4-3-2-1 countdown, single short tick, bright and silly, no voice",
+    duration: 0.65,
+  },
+  {
     id: "decline-whaaat",
     type: "sfx" as const,
     prompt:
