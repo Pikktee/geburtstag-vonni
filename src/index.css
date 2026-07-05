@@ -1072,7 +1072,7 @@ button {
 }
 
 .ui-layer--celebrating .captcha-step__visual {
-  background: rgba(255, 252, 245, 0.82) !important;
+  background: rgba(255, 252, 248, 0.94) !important;
 }
 
 .ui-layer--celebrating .captcha-step__puzzle-area {
@@ -1126,7 +1126,7 @@ button {
   }
 
   .ui-layer--celebrating .captcha-step__visual {
-    background: rgba(255, 252, 245, 0.78) !important;
+    background: rgba(255, 252, 248, 0.96) !important;
   }
 }
 
@@ -1185,32 +1185,28 @@ button {
   position: relative;
   margin: 0;
   font-family: var(--font-marker);
-  font-size: clamp(1rem, 3.5vw, 1.2rem);
-  line-height: 1.55;
+  font-size: clamp(1.05rem, 3.8vw, 1.28rem);
+  line-height: 1.65;
   user-select: none;
 }
 
 .captcha-challenge-text__word {
   display: inline-block;
-  white-space: nowrap;
-}
-
-.captcha-challenge-text__char {
-  display: inline-block;
+  white-space: normal;
+  margin-inline-end: 0.2em;
   text-shadow:
-    1px 1px 0 rgba(0, 0, 0, 0.9),
-    -1px 0 0 rgba(255, 255, 255, 0.35),
-    0 0 10px rgba(255, 255, 255, 0.25);
+    0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .captcha-step__instruction {
   position: relative;
   margin: 0.65rem 0 0;
-  font-size: 0.72rem;
-  color: #4a2a6a;
+  font-size: 0.74rem;
+  color: #3d2858;
   font-style: italic;
   font-weight: 700;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
 .captcha-step__field {

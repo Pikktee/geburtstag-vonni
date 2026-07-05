@@ -64,19 +64,14 @@ const REAL_FAIL_MESSAGES = [
   "Das stimmt nicht. Bitte erneut eingeben.",
 ];
 
-const CAPTCHA_TEXT_HUES = [
-  "var(--scam-blue)",
-  "var(--scam-red)",
-  "var(--scam-yellow)",
-  "var(--scam-pink)",
-  "var(--scam-purple)",
-  "var(--scam-green)",
-] as const;
+/** Lesbare Akzente — pro Wort, nicht pro Buchstabe. */
+const CAPTCHA_WORD_COLORS = (accent: string) =>
+  [accent, "#243d7a", "#4a2868", "#1a5c42", accent, "#5c3d1a"] as const;
 
 function CaptchaChallengeText({ text, accent }: { text: string; accent: string }) {
-  const hues = [accent, ...CAPTCHA_TEXT_HUES.filter((c) => c !== accent)];
+  const wordColors = CAPTCHA_WORD_COLORS(accent);
   const tokens = text.match(/(\s+|[^\s]+)/g) ?? [text];
-  let charIndex = 0;
+  let wordIndex = 0;
 
   return (
     <p className="captcha-challenge-text" aria-label={text}>
@@ -85,23 +80,19 @@ function CaptchaChallengeText({ text, accent }: { text: string; accent: string }
           return <span key={`space-${tokenIndex}`}> </span>;
         }
 
+        const i = wordIndex++;
+        const tilt = (i % 2 === 0 ? 1 : -1) * ((i * 4) % 5);
+
         return (
-          <span key={`word-${tokenIndex}`} className="captcha-challenge-text__word">
-            {token.split("").map((char) => {
-              const i = charIndex++;
-              return (
-                <span
-                  key={`${char}-${i}`}
-                  className="captcha-challenge-text__char"
-                  style={{
-                    transform: `rotate(${(i * 11) % 14 - 7}deg) translateY(${(i * 5) % 5 - 2}px)`,
-                    color: hues[i % hues.length],
-                  }}
-                >
-                  {char}
-                </span>
-              );
-            })}
+          <span
+            key={`word-${tokenIndex}`}
+            className="captcha-challenge-text__word"
+            style={{
+              color: wordColors[i % wordColors.length],
+              transform: `rotate(${tilt}deg) translateY(${i % 3 === 0 ? 1 : 0}px)`,
+            }}
+          >
+            {token}
           </span>
         );
       })}
