@@ -67,22 +67,19 @@ export function MobileDestinationMontage({
         )}
       </AnimatePresence>
 
-      {countdownValue !== null && (
-        <div className="mobile-montage__countdown" aria-live="polite" aria-atomic="true">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={countdownValue}
-              className="mobile-montage__countdown-num"
-              initial={{ scale: 0.15, rotate: -18, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
-              exit={{ scale: 1.25, rotate: 10, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 560, damping: 17 }}
-            >
-              {countdownValue}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-      )}
+      <div className="mobile-montage__countdown" aria-live="polite" aria-atomic="true">
+        {countdownValue !== null && (
+          <motion.span
+            key={countdownValue}
+            className="mobile-montage__countdown-num"
+            initial={{ scale: 1.38, rotate: -6 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 720, damping: 24, mass: 0.5 }}
+          >
+            {countdownValue}
+          </motion.span>
+        )}
+      </div>
 
       <p className="mobile-montage__hint">Wohin geht die Reise? Gleich erfährst du mehr…</p>
     </div>
