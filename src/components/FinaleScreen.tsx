@@ -119,27 +119,19 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
       </motion.div>
 
       {floaters.map((f) => (
-        <motion.span
+        <span
           key={f.id}
           className="finale-screen__floater"
-          initial={{ opacity: 0, y: "14vh", x: 0 }}
-          animate={{
-            opacity: [0, 1, 1, 0],
-            y: ["14vh", "-112vh"],
-            x: [0, f.drift],
+          style={{
+            left: `${f.left}%`,
+            ["--drift" as string]: `${f.drift}px`,
+            animationDuration: `${f.duration}s`,
+            animationDelay: `${f.delay}s`,
           }}
-          transition={{
-            delay: f.delay,
-            duration: f.duration,
-            repeat: Infinity,
-            ease: "linear",
-            opacity: { times: [0, 0.05, 0.9, 1], ease: "easeInOut" },
-          }}
-          style={{ left: `${f.left}%` }}
           aria-hidden="true"
         >
           {f.glyph}
-        </motion.span>
+        </span>
       ))}
 
       <div className="finale-screen__content">

@@ -76,13 +76,22 @@ button {
 }
 
 @media (max-width: 768px) and (orientation: portrait) {
-  .fireworks-layer canvas {
-    mix-blend-mode: screen;
+  .fireworks-layer--mobile {
+    z-index: 14;
+  }
+
+  .fireworks-layer--mobile canvas {
+    mix-blend-mode: normal;
+    opacity: 1;
   }
 
   .celebration-layer .confetti-canvas {
     opacity: 0;
     pointer-events: none;
+  }
+
+  .canvas-layer::after {
+    opacity: 0.55;
   }
 }
 
@@ -1126,7 +1135,7 @@ button {
 
 @media (max-width: 768px) and (orientation: portrait) {
   .ui-layer--celebrating .scam-panel {
-    background: rgba(10, 0, 24, 0.22);
+    background: rgba(10, 0, 24, 0.18);
     backdrop-filter: blur(2px) saturate(1.02);
     box-shadow:
       0 0 0 2px var(--scam-red),
@@ -1578,6 +1587,7 @@ button {
 
 .finale-screen__ring {
   position: absolute;
+  z-index: 1;
   border-radius: 50%;
   border: 2px dashed;
   pointer-events: none;
@@ -1597,6 +1607,7 @@ button {
 
 .finale-screen__orbit {
   position: absolute;
+  z-index: 2;
   width: min(78vw, 440px);
   height: min(78vw, 440px);
   pointer-events: none;
@@ -1635,15 +1646,34 @@ button {
 .finale-screen__floater {
   position: absolute;
   bottom: 0;
+  z-index: 3;
   font-size: clamp(1rem, 4vw, 1.6rem);
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
   will-change: transform, opacity;
+  animation: finale-floater-rise linear infinite;
+}
+
+@keyframes finale-floater-rise {
+  0% {
+    transform: translate3d(0, 12vh, 0);
+    opacity: 0;
+  }
+  7% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), -118vh, 0);
+    opacity: 0;
+  }
 }
 
 .finale-screen__content {
   position: relative;
-  z-index: 2;
+  z-index: 5;
   width: min(100%, 34rem);
   text-align: center;
   padding: 1.5rem 1.1rem;
@@ -1699,4 +1729,50 @@ button {
   color: var(--scam-pink);
   font-size: clamp(1rem, 3.5vw, 1.15rem);
   line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .finale-screen {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    align-items: flex-start;
+    padding-top: calc(var(--marquee-height, 2.35rem) + 0.75rem);
+    padding-bottom: 1.5rem;
+  }
+
+  .finale-screen__ring--outer {
+    width: min(124vw, 560px);
+    height: min(124vw, 560px);
+  }
+
+  .finale-screen__ring--inner {
+    width: min(98vw, 440px);
+    height: min(98vw, 440px);
+  }
+
+  .finale-screen__orbit--koala {
+    width: min(128vw, 580px);
+    height: min(128vw, 580px);
+    top: calc(50% - min(64vw, 290px));
+    left: calc(50% - min(64vw, 290px));
+  }
+
+  .finale-screen__orbit--alpaka {
+    width: min(112vw, 500px);
+    height: min(112vw, 500px);
+    top: calc(50% - min(56vw, 250px));
+    left: calc(50% - min(56vw, 250px));
+  }
+
+  .finale-screen__avatar {
+    width: clamp(3.25rem, 15vw, 4.75rem);
+    height: clamp(3.25rem, 15vw, 4.75rem);
+    margin-left: calc(clamp(3.25rem, 15vw, 4.75rem) / -2);
+    box-shadow: 0 0 28px rgba(255, 105, 180, 0.75);
+  }
+
+  .finale-screen__content {
+    margin-top: min(8vh, 3.5rem);
+  }
 }

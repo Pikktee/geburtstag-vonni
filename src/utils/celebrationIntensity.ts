@@ -30,7 +30,7 @@ export function scaleCelebrationForMobile(intensity: number, isMobile: boolean):
 /** Feuerwerk — auf Mobile bewusst nicht abschwächen. */
 export function scaleFireworksForMobile(intensity: number, isMobile: boolean): number {
   if (!isMobile) return intensity;
-  return Math.max(0.72, Math.min(1, intensity * 1.05));
+  return Math.max(0.82, Math.min(1, intensity * 1.08));
 }
 
 export function fireworkIntervalMs(

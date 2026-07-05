@@ -364,13 +364,19 @@ export function Fireworks({
     const level = intensityRef.current * (mobile ? 0.68 : boosted ? 1.12 : 1);
 
     if (boosted) {
-      coreMat.size = 0.2;
-      sparkleMat.size = 0.34;
-      glowMat.size = 0.58;
-      coreMat.opacity = 0.45 + level * 0.5;
-      sparkleMat.opacity = 0.38 + level * 0.45;
-      glowMat.opacity = 0.16 + level * 0.22;
+      coreMat.blending = THREE.NormalBlending;
+      sparkleMat.blending = THREE.NormalBlending;
+      glowMat.blending = THREE.AdditiveBlending;
+      coreMat.size = 0.26;
+      sparkleMat.size = 0.42;
+      glowMat.size = 0.65;
+      coreMat.opacity = 0.72 + level * 0.28;
+      sparkleMat.opacity = 0.62 + level * 0.35;
+      glowMat.opacity = 0.22 + level * 0.28;
     } else {
+      coreMat.blending = THREE.AdditiveBlending;
+      sparkleMat.blending = THREE.AdditiveBlending;
+      glowMat.blending = THREE.AdditiveBlending;
       coreMat.size = 0.12;
       sparkleMat.size = 0.22;
       glowMat.size = 0.4;
