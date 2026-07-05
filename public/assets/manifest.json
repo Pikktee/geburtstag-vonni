@@ -1,0 +1,29 @@
+{
+  "images": {
+    "bielefeld": "/assets/images/bielefeld.jpg",
+    "beirut": "/assets/images/beirut.jpg",
+    "sauna": "/assets/images/sauna.jpg",
+    "ao-hotel": "/assets/images/ao-hotel.jpg",
+    "absteige": "/assets/images/absteige.jpg",
+    "love-hotel": "/assets/images/love-hotel.jpg",
+    "niedwald": "/assets/images/niedwald.jpg",
+    "thai-beach": "/assets/images/thai-beach.jpg",
+    "koala": "/assets/images/koala.jpg",
+    "alpaka": "/assets/images/alpaka.jpg",
+    "koala-alpaka-frankfurt": "/assets/images/koala-alpaka-frankfurt.jpg"
+  },
+  "audio": {
+    "birthday-soundtrack": "/assets/audio/birthday-soundtrack.mp3",
+    "firework-whistle": "/assets/audio/firework-whistle.mp3",
+    "firework-crackle": "/assets/audio/firework-crackle.mp3",
+    "firework-glitter": "/assets/audio/firework-glitter.mp3",
+    "firework-finale": "/assets/audio/firework-finale.mp3",
+    "firework-heart": "/assets/audio/firework-heart.mp3",
+    "party-whoosh": "/assets/audio/party-whoosh.mp3",
+    "confetti-pop": "/assets/audio/confetti-pop.mp3",
+    "win-fanfare": "/assets/audio/win-fanfare.mp3",
+    "cash-register": "/assets/audio/cash-register.mp3",
+    "magic-sparkle": "/assets/audio/magic-sparkle.mp3"
+  },
+  "generatedAt": "2026-07-05T17:53:51.820Z"
+}
