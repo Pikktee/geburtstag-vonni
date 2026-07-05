@@ -11,7 +11,7 @@ export interface LocationMeta {
 
 export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMeta> = {
   beirut: {
-    label: "Beirut",
+    label: "Beirut?",
     laneY: 5.4,
     depthZ: -4.2,
     direction: 1,
@@ -19,7 +19,7 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
     startX: -22,
   },
   sauna: {
-    label: "Sauna",
+    label: "Sauna?",
     laneY: 2.2,
     depthZ: -7.4,
     direction: -1,
@@ -27,7 +27,7 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
     startX: 16,
   },
   bielefeld: {
-    label: "Bielefeld",
+    label: "Bielefeld?",
     laneY: -1.2,
     depthZ: -5.6,
     direction: 1,
@@ -35,7 +35,7 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
     startX: -4,
   },
   niedwald: {
-    label: "Niedwald",
+    label: "Dietzenbacher Wald?",
     laneY: -4.0,
     depthZ: -9.2,
     direction: -1,
@@ -43,7 +43,7 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
     startX: 20,
   },
   "thai-beach": {
-    label: "Thailand",
+    label: "Thailand?",
     laneY: -6.8,
     depthZ: -6.4,
     direction: 1,
