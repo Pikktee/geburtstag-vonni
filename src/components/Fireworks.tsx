@@ -276,7 +276,15 @@ function burstShockwave(pool: Particle[], origin: THREE.Vector3, color: THREE.Co
   }
 }
 
-export function Fireworks({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
+export function Fireworks({
+  active,
+  intensity = 1,
+  mobileReduced = false,
+}: {
+  active: boolean;
+  intensity?: number;
+  mobileReduced?: boolean;
+}) {
   const coreRef = useRef<THREE.Points>(null);
   const sparkleRef = useRef<THREE.Points>(null);
   const glowRef = useRef<THREE.Points>(null);
@@ -287,7 +295,9 @@ export function Fireworks({ active, intensity = 1 }: { active: boolean; intensit
   const finaleTimer = useRef(0);
   const pointLightRef = useRef<THREE.PointLight>(null);
   const intensityRef = useRef(intensity);
+  const mobileRef = useRef(mobileReduced);
   intensityRef.current = Math.max(0.15, Math.min(1, intensity));
+  mobileRef.current = mobileReduced;
 
   const { coreGeo, sparkleGeo, glowGeo, coreMat, sparkleMat, glowMat } = useMemo(() => {
     const mkGeo = (withSize = false) => {
@@ -345,7 +355,8 @@ export function Fireworks({ active, intensity = 1 }: { active: boolean; intensit
   useFrame((_, delta) => {
     if (!coreRef.current || !sparkleRef.current || !glowRef.current) return;
 
-    const level = intensityRef.current;
+    const mobile = mobileRef.current;
+    const level = intensityRef.current * (mobile ? 0.42 : 1);
     coreMat.opacity = 0.25 + level * 0.4;
     sparkleMat.opacity = 0.2 + level * 0.35;
     glowMat.opacity = 0.08 + level * 0.14;
@@ -354,15 +365,19 @@ export function Fireworks({ active, intensity = 1 }: { active: boolean; intensit
       spawnTimer.current += delta;
       finaleTimer.current += delta;
 
-      const maxRockets = Math.max(2, Math.round(9 * level));
-      const spawnDelay = 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
+      const maxRockets = mobile
+        ? Math.max(1, Math.round(2.2 * level))
+        : Math.max(2, Math.round(9 * level));
+      const spawnDelay = mobile
+        ? 0.75 + (1.1 - level * 0.5) + Math.random() * 0.55
+        : 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
 
       if (spawnTimer.current > spawnDelay && rocketsRef.current.length < maxRockets) {
         spawnTimer.current = 0;
-        rocketsRef.current.push(spawnRocket(undefined, 0.45 + level * 0.55));
+        rocketsRef.current.push(spawnRocket(undefined, 0.35 + level * 0.45));
       }
 
-      if (level > 0.65 && finaleTimer.current > 6.5) {
+      if (!mobile && level > 0.65 && finaleTimer.current > 6.5) {
         finaleTimer.current = 0;
         [-10, -5, 5, 10].forEach((fx, i) => {
           window.setTimeout(

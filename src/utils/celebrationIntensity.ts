@@ -19,14 +19,32 @@ export function computeCelebrationIntensity(
   return Math.max(MIN_INTENSITY, Math.min(MAX_INTENSITY, intensity));
 }
 
-export function fireworkIntervalMs(intensity: number, musicPlaying: boolean): number {
-  const base = musicPlaying ? 2_400 : 2_000;
-  return base + (1 - intensity) * 14_000;
+/** Mobile: weniger Partikel, bessere Lesbarkeit der Karte. */
+export const MOBILE_CELEBRATION_SCALE = 0.36;
+
+export function scaleCelebrationForMobile(intensity: number, isMobile: boolean): number {
+  if (!isMobile) return intensity;
+  return Math.max(0.08, intensity * MOBILE_CELEBRATION_SCALE);
 }
 
-export function fireworkVolume(intensity: number, musicPlaying: boolean): number {
+export function fireworkIntervalMs(
+  intensity: number,
+  musicPlaying: boolean,
+  isMobile = false,
+): number {
+  const base = musicPlaying ? 2_400 : 2_000;
+  let interval = base + (1 - intensity) * 14_000;
+  if (isMobile) interval *= 2.4;
+  return interval;
+}
+
+export function fireworkVolume(intensity: number, musicPlaying: boolean, isMobile = false): number {
+  let volume: number;
   if (musicPlaying) {
-    return 0.34 + intensity * 0.42;
+    volume = 0.34 + intensity * 0.42;
+  } else {
+    volume = 0.44 + intensity * 0.38;
   }
-  return 0.44 + intensity * 0.38;
+  if (isMobile) volume *= 0.72;
+  return volume;
 }

@@ -5,11 +5,14 @@ interface ConfettiOverlayProps {
   active: boolean;
   burst?: boolean;
   intensity?: number;
+  /** Kein Vollbild-Konfetti — nur dezente fallende Partikel (Mobile). */
+  subtle?: boolean;
 }
 
 const COLORS = ["#ff0040", "#ffe600", "#00ff66", "#ff69b4", "#9b30ff", "#0066ff", "#ffffff"];
 
 type ConfettiShape = ReturnType<typeof confetti.shapeFromPath>;
+type ConfettiFire = ReturnType<typeof confetti.create>;
 
 let heartShape: ConfettiShape | null = null;
 
@@ -24,10 +27,10 @@ function getHeartShape() {
 
 const BASE_OPTS = { flat: false, disableForReducedMotion: true };
 
-function fireEdgeBursts(scale = 1) {
+function fireEdgeBursts(fire: ConfettiFire, scale = 1) {
   const shapes: ConfettiShape[] = [getHeartShape(), "star", "circle"];
   const count = Math.max(12, Math.round(45 * scale));
-  confetti({
+  fire({
     ...BASE_OPTS,
     particleCount: count,
     angle: 58,
@@ -39,7 +42,7 @@ function fireEdgeBursts(scale = 1) {
     gravity: 0.9,
     ticks: 240,
   });
-  confetti({
+  fire({
     ...BASE_OPTS,
     particleCount: count,
     angle: 122,
@@ -53,9 +56,9 @@ function fireEdgeBursts(scale = 1) {
   });
 }
 
-function fireTopShower(scale = 1) {
+function fireTopShower(fire: ConfettiFire, scale = 1) {
   const count = Math.max(6, Math.round(18 * scale));
-  confetti({
+  fire({
     ...BASE_OPTS,
     particleCount: count,
     spread: 70,
@@ -68,7 +71,7 @@ function fireTopShower(scale = 1) {
     ticks: 350,
     drift: (Math.random() - 0.5) * 0.6,
   });
-  confetti({
+  fire({
     ...BASE_OPTS,
     particleCount: count,
     spread: 70,
@@ -83,9 +86,9 @@ function fireTopShower(scale = 1) {
   });
 }
 
-function fireCornerPop(scale = 1) {
+function fireCornerPop(fire: ConfettiFire, scale = 1) {
   const x = Math.random() > 0.5 ? 0.12 : 0.88;
-  confetti({
+  fire({
     ...BASE_OPTS,
     particleCount: Math.max(10, Math.round(35 * scale)),
     angle: x < 0.5 ? 45 : 135,
@@ -124,14 +127,24 @@ function createPiece(id: number): FallingPiece {
   };
 }
 
-function FallingParticles({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
-  const pieceCount = Math.max(8, Math.round(28 * intensity));
+function FallingParticles({
+  active,
+  intensity = 1,
+  subtle = false,
+}: {
+  active: boolean;
+  intensity?: number;
+  subtle?: boolean;
+}) {
+  const pieceCount = subtle
+    ? Math.max(4, Math.round(10 * intensity))
+    : Math.max(8, Math.round(28 * intensity));
   const [pieces] = useState(() => Array.from({ length: pieceCount }, (_, i) => createPiece(i)));
 
   if (!active) return null;
 
   return (
-    <div className="falling-particles" aria-hidden="true">
+    <div className={`falling-particles${subtle ? " falling-particles--subtle" : ""}`} aria-hidden="true">
       {pieces.map((p) => (
         <span
           key={p.id}
@@ -152,21 +165,35 @@ function FallingParticles({ active, intensity = 1 }: { active: boolean; intensit
   );
 }
 
-export function ConfettiOverlay({ active, burst, intensity = 1 }: ConfettiOverlayProps) {
+export function ConfettiOverlay({ active, burst, intensity = 1, subtle = false }: ConfettiOverlayProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fireRef = useRef<ConfettiFire | null>(null);
   const edgeInterval = useRef<number | null>(null);
   const showerInterval = useRef<number | null>(null);
   const cornerInterval = useRef<number | null>(null);
   const level = Math.max(0.2, Math.min(1, intensity));
-
-  const fireBurst = useCallback(() => {
-    fireEdgeBursts(level);
-    fireTopShower(level);
-    fireCornerPop(level);
-  }, [level]);
+  const burstScale = subtle ? level * 0.28 : level;
 
   useEffect(() => {
-    if (burst) fireBurst();
-  }, [burst, fireBurst]);
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    fireRef.current = confetti.create(canvas, { resize: true });
+    return () => {
+      fireRef.current = null;
+    };
+  }, []);
+
+  const fireBurst = useCallback(() => {
+    const fire = fireRef.current;
+    if (!fire || subtle) return;
+    fireEdgeBursts(fire, burstScale);
+    fireTopShower(fire, burstScale);
+    fireCornerPop(fire, burstScale);
+  }, [burstScale, subtle]);
+
+  useEffect(() => {
+    if (burst && !subtle) fireBurst();
+  }, [burst, fireBurst, subtle]);
 
   useEffect(() => {
     if (!active) {
@@ -179,18 +206,36 @@ export function ConfettiOverlay({ active, burst, intensity = 1 }: ConfettiOverla
       return;
     }
 
+    if (subtle) {
+      return undefined;
+    }
+
     getHeartShape();
     fireBurst();
-    edgeInterval.current = window.setInterval(() => fireEdgeBursts(level), 2800 / level);
-    showerInterval.current = window.setInterval(() => fireTopShower(level), 900 / level);
-    cornerInterval.current = window.setInterval(() => fireCornerPop(level), 2200 / level);
+    edgeInterval.current = window.setInterval(() => {
+      const fire = fireRef.current;
+      if (fire) fireEdgeBursts(fire, level);
+    }, 2800 / level);
+    showerInterval.current = window.setInterval(() => {
+      const fire = fireRef.current;
+      if (fire) fireTopShower(fire, level);
+    }, 900 / level);
+    cornerInterval.current = window.setInterval(() => {
+      const fire = fireRef.current;
+      if (fire) fireCornerPop(fire, level);
+    }, 2200 / level);
 
     return () => {
       [edgeInterval, showerInterval, cornerInterval].forEach((ref) => {
         if (ref.current) window.clearInterval(ref.current);
       });
     };
-  }, [active, fireBurst, level]);
+  }, [active, fireBurst, level, subtle]);
 
-  return <FallingParticles active={active} intensity={level} />;
-}
+  return (
+    <>
+      <canvas ref={canvasRef} className="confetti-canvas" aria-hidden />
+      <FallingParticles active={active} intensity={level} subtle={subtle} />
+    </>
+  );
+};

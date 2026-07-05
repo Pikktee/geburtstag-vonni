@@ -3,13 +3,16 @@ import { Scene3D } from "./components/Scene3D";
 import { ConfettiOverlay } from "./components/ConfettiOverlay";
 import { ScamMarquee, BOTTOM_MARQUEE_TEXT, TOP_MARQUEE_TEXT } from "./components/ScamMarquee";
 import { GiftFlow } from "./components/GiftFlow";
+import { MobileDestinationMontage } from "./components/MobileDestinationMontage";
 import { useAudio } from "./hooks/useAudio";
+import { useIsMobilePortrait } from "./hooks/useIsMobile";
 import type { AssetManifest, FlowStep } from "./types";
 import { LOCATION_IMAGES } from "./types";
 import {
   computeCelebrationIntensity,
   fireworkIntervalMs,
   fireworkVolume,
+  scaleCelebrationForMobile,
 } from "./utils/celebrationIntensity";
 
 const DEFAULT_IMAGES: Record<string, string> = Object.fromEntries([
@@ -24,8 +27,10 @@ export default function App() {
   const [step, setStep] = useState<FlowStep>("intro");
   const [confettiBurst, setConfettiBurst] = useState(0);
   const [started, setStarted] = useState(false);
+  const [mobileMontage, setMobileMontage] = useState(false);
   const [celebrationIntensity, setCelebrationIntensity] = useState(1);
   const startedAtRef = useRef<number | null>(null);
+  const isPortraitMobile = useIsMobilePortrait();
   const { beginCelebration, playSfx, playFireworkBurst, playPartyHorn, playButtonClick, playFinaleJingle, musicPlayingRef } =
     useAudio(manifest?.audio);
 
@@ -53,6 +58,8 @@ export default function App() {
       .catch(() => undefined);
   }, []);
 
+  const effectiveIntensity = scaleCelebrationForMobile(celebrationIntensity, isPortraitMobile);
+
   useEffect(() => {
     if (!started || startedAtRef.current === null || isFinale) return;
 
@@ -76,12 +83,15 @@ export default function App() {
     const schedule = () => {
       if (cancelled) return;
 
-      const intensity = computeCelebrationIntensity(startedAtRef.current!, Date.now(), step);
+      const intensity = scaleCelebrationForMobile(
+        computeCelebrationIntensity(startedAtRef.current!, Date.now(), step),
+        isPortraitMobile,
+      );
       const isMusicPlaying = musicPlayingRef.current;
-      const volume = fireworkVolume(intensity, isMusicPlaying);
+      const volume = fireworkVolume(intensity, isMusicPlaying, isPortraitMobile);
       playFireworkBurst(volume);
 
-      const delay = fireworkIntervalMs(intensity, isMusicPlaying);
+      const delay = fireworkIntervalMs(intensity, isMusicPlaying, isPortraitMobile);
       timeoutId = window.setTimeout(schedule, delay);
     };
 
@@ -92,7 +102,7 @@ export default function App() {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [started, step, isFinale, playFireworkBurst, musicPlayingRef]);
+  }, [started, step, isFinale, isPortraitMobile, playFireworkBurst, musicPlayingRef]);
 
   const handlePlayFinale = useCallback(() => {
     void playFinaleJingle();
@@ -100,21 +110,35 @@ export default function App() {
 
   const imagePaths = { ...DEFAULT_IMAGES, ...manifest?.images };
 
-  const startExperience = useCallback(() => {
+  const launchExperience = useCallback(() => {
     if (started) return;
     startedAtRef.current = Date.now();
     setStarted(true);
     setConfettiBurst((b) => b + 1);
 
     void beginCelebration().then((playing) => {
-      if (playing) {
+      if (playing && !isPortraitMobile) {
         window.setTimeout(() => playFireworkBurst(0.48), 1_500);
         window.setTimeout(() => playFireworkBurst(0.4), 3_200);
       }
     });
 
     setTimeout(() => setStep("offer"), 1_200);
-  }, [started, beginCelebration, playFireworkBurst]);
+  }, [started, beginCelebration, playFireworkBurst, isPortraitMobile]);
+
+  const startExperience = useCallback(() => {
+    if (started) return;
+    if (isPortraitMobile) {
+      setMobileMontage(true);
+      return;
+    }
+    launchExperience();
+  }, [started, isPortraitMobile, launchExperience]);
+
+  const handleMontageComplete = useCallback(() => {
+    setMobileMontage(false);
+    launchExperience();
+  }, [launchExperience]);
 
   const handleAccept = () => {
     setConfettiBurst((b) => b + 1);
@@ -128,17 +152,26 @@ export default function App() {
       {!isFinale && <ScamMarquee text={TOP_MARQUEE_TEXT} duration={35} fixed="top" />}
 
       {!isFinale && (
-        <Scene3D
-          imagePaths={imagePaths}
-          showFireworks={showFireworks}
-          fireworksIntensity={celebrationIntensity}
-        />
-      )}
-      {!isFinale && (
-        <ConfettiOverlay active={showConfetti} burst={confettiBurst > 0} intensity={celebrationIntensity} />
+        <div className="celebration-layer" aria-hidden="true">
+          <Scene3D
+            imagePaths={imagePaths}
+            showFireworks={showFireworks}
+            fireworksIntensity={effectiveIntensity}
+          />
+          <ConfettiOverlay
+            active={showConfetti}
+            burst={confettiBurst > 0}
+            intensity={effectiveIntensity}
+            subtle={isPortraitMobile}
+          />
+        </div>
       )}
 
-      {!started && (
+      {mobileMontage && (
+        <MobileDestinationMontage imagePaths={imagePaths} onComplete={handleMontageComplete} />
+      )}
+
+      {!started && !mobileMontage && (
         <div
           style={{
             position: "fixed",

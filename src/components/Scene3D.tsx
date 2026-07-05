@@ -4,8 +4,7 @@ import { Html, Stars } from "@react-three/drei";
 import * as THREE from "three";
 import { FloatingImages, SceneDecor } from "./FloatingImages";
 import { Fireworks } from "./Fireworks";
-import { MobileImageStrip } from "./MobileImageStrip";
-import { useIsMobile } from "../hooks/useIsMobile";
+import { useIsMobilePortrait } from "../hooks/useIsMobile";
 
 interface Scene3DProps {
   imagePaths: Record<string, string>;
@@ -35,13 +34,14 @@ function SceneContent({
   showFireworks,
   showFloatingCards,
   fireworksIntensity = 1,
-}: Scene3DProps & { showFloatingCards: boolean }) {
+  mobileReduced = false,
+}: Scene3DProps & { showFloatingCards: boolean; mobileReduced?: boolean }) {
   return (
     <>
       <color attach="background" args={["#0a0014"]} />
       <fog attach="fog" args={["#0a0014", 28, 55]} />
-      <Stars radius={80} depth={40} count={1800} factor={2} saturation={0.4} fade speed={0.5} />
-      <Fireworks active={showFireworks} intensity={fireworksIntensity} />
+      <Stars radius={80} depth={40} count={mobileReduced ? 900 : 1800} factor={2} saturation={0.4} fade speed={0.5} />
+      <Fireworks active={showFireworks} intensity={fireworksIntensity} mobileReduced={mobileReduced} />
       {showFloatingCards && (
         <Suspense fallback={<LoadingFallback />}>
           <FloatingImages imagePaths={imagePaths} />
@@ -53,21 +53,21 @@ function SceneContent({
 }
 
 export function Scene3D({ imagePaths, showFireworks, fireworksIntensity = 1 }: Scene3DProps) {
-  const isMobile = useIsMobile();
+  const isPortraitMobile = useIsMobilePortrait();
 
   return (
-    <div className={`canvas-layer${isMobile ? " canvas-layer--mobile" : ""}`}>
-      {isMobile && <MobileImageStrip imagePaths={imagePaths} />}
+    <div className={`canvas-layer${isPortraitMobile ? " canvas-layer--mobile" : ""}`}>
       <Canvas
         camera={{ position: [0, 0.8, 8], fov: 72 }}
-        dpr={[1, isMobile ? 1.5 : 2]}
-        gl={{ antialias: !isMobile, alpha: false, toneMapping: THREE.NoToneMapping }}
+        dpr={[1, isPortraitMobile ? 1.5 : 2]}
+        gl={{ antialias: !isPortraitMobile, alpha: false, toneMapping: THREE.NoToneMapping }}
       >
         <SceneContent
           imagePaths={imagePaths}
           showFireworks={showFireworks}
-          showFloatingCards={!isMobile}
+          showFloatingCards={!isPortraitMobile}
           fireworksIntensity={fireworksIntensity}
+          mobileReduced={isPortraitMobile}
         />
       </Canvas>
     </div>
