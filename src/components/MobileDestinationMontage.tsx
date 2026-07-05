@@ -60,7 +60,6 @@ export function MobileDestinationMontage({
               className="mobile-montage__img"
             />
             <figcaption className="mobile-montage__caption">
-              <span className="mobile-montage__eyebrow blink">★ Ziel streng geheim ★</span>
               <span className="mobile-montage__name">{LOCATION_META[currentId].label}</span>
             </figcaption>
           </motion.figure>
