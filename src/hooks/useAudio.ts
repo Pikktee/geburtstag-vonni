@@ -31,6 +31,7 @@ const MUSIC_VOLUME = 0.74;
 const MUSIC_FADE_IN_MS = 1_100;
 const FINALE_VOLUME = 0.38;
 const PARTY_HORN_VOLUME = 0.45;
+const FIREWORK_WHISTLE_VOLUME_SCALE = 0.62;
 const BUTTON_CLICK_VOLUME = 0.36;
 const SFX_FADE_IN_MS = 120;
 
@@ -330,7 +331,9 @@ export function useAudio(manifestAudio?: Record<string, string>) {
     (volume = 0.5) => {
       const key = FIREWORK_SFX[fireworkPick.current % FIREWORK_SFX.length];
       fireworkPick.current += 1;
-      playSfx(key, volume, 80);
+      const effectiveVolume =
+        key === "firework-whistle" ? volume * FIREWORK_WHISTLE_VOLUME_SCALE : volume;
+      playSfx(key, effectiveVolume, 80);
     },
     [playSfx],
   );
