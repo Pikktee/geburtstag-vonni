@@ -63,8 +63,8 @@ export function GiftFlow({
   }
 
   const handleAccept = () => {
-    onPlaySfx("win-fanfare", 0.48);
-    setTimeout(() => onPlaySfx("cash-register", 0.44), 600);
+    onPlaySfx("win-fanfare", 0.38);
+    setTimeout(() => onPlaySfx("cash-register", 0.36), 600);
     onAccept();
     onStepChange("verification");
   };
@@ -77,7 +77,7 @@ export function GiftFlow({
   };
 
   const handleVerificationSuccess = () => {
-    onPlaySfx("magic-sparkle", 0.44);
+    onPlaySfx("magic-sparkle", 0.36);
     onPlayPartyHorn();
     void sendNotification({ type: "gift_accepted", acceptedAt: new Date().toISOString() });
     onStepChange("accepted");
@@ -98,7 +98,7 @@ export function GiftFlow({
       submittedAt: request.submittedAt,
     });
     onPlayPartyHorn();
-    onPlaySfx("party-whoosh", 0.3);
+    onPlaySfx("party-whoosh", 0.24);
     void onPlayFinale();
     onStepChange("confirmed");
   };
