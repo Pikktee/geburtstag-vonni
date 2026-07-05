@@ -440,6 +440,37 @@ button {
   pointer-events: auto;
 }
 
+@media (max-width: 768px) {
+  .ui-layer {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+
+  .gift-flow {
+    justify-content: flex-start;
+    min-height: auto;
+    padding-top: calc(var(--marquee-height) + 0.45rem);
+    padding-bottom: calc(var(--marquee-height) + 1.25rem);
+  }
+
+  .gift-flow--compact {
+    padding-top: calc(var(--marquee-height) + 0.35rem);
+    padding-bottom: calc(var(--marquee-height) + 1rem);
+  }
+
+  .gift-flow__panel {
+    flex-shrink: 0;
+    margin-bottom: 0.35rem;
+  }
+
+  .identity-captcha {
+    margin-bottom: 0.5rem;
+  }
+}
+
 @keyframes blink {
   0%,
   49% {
@@ -962,14 +993,6 @@ button {
 
   .scam-panel {
     border-width: 3px;
-  }
-
-  .gift-flow {
-    padding-bottom: calc(var(--marquee-height) + 0.75rem);
-  }
-
-  .gift-flow--compact {
-    padding-bottom: calc(var(--marquee-height) + 0.5rem);
   }
 }
 
