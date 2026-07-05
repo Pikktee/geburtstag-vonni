@@ -19,12 +19,12 @@ export function computeCelebrationIntensity(
   return Math.max(MIN_INTENSITY, Math.min(MAX_INTENSITY, intensity));
 }
 
-/** Mobile: weniger Partikel, bessere Lesbarkeit der Karte. */
-export const MOBILE_CELEBRATION_SCALE = 0.36;
+/** Mobile Hochformat: sichtbar durch die Karte, Text bleibt lesbar. */
+export const MOBILE_CELEBRATION_SCALE = 0.58;
 
 export function scaleCelebrationForMobile(intensity: number, isMobile: boolean): number {
   if (!isMobile) return intensity;
-  return Math.max(0.08, intensity * MOBILE_CELEBRATION_SCALE);
+  return Math.max(0.14, intensity * MOBILE_CELEBRATION_SCALE);
 }
 
 export function fireworkIntervalMs(
@@ -34,7 +34,7 @@ export function fireworkIntervalMs(
 ): number {
   const base = musicPlaying ? 2_400 : 2_000;
   let interval = base + (1 - intensity) * 14_000;
-  if (isMobile) interval *= 2.4;
+  if (isMobile) interval *= 1.65;
   return interval;
 }
 
@@ -45,6 +45,6 @@ export function fireworkVolume(intensity: number, musicPlaying: boolean, isMobil
   } else {
     volume = 0.44 + intensity * 0.38;
   }
-  if (isMobile) volume *= 0.72;
+  if (isMobile) volume *= 0.86;
   return volume;
 }

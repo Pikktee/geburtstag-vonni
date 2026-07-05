@@ -41,7 +41,9 @@ function SceneContent({
       <color attach="background" args={["#0a0014"]} />
       <fog attach="fog" args={["#0a0014", 28, 55]} />
       <Stars radius={80} depth={40} count={mobileReduced ? 900 : 1800} factor={2} saturation={0.4} fade speed={0.5} />
-      <Fireworks active={showFireworks} intensity={fireworksIntensity} mobileReduced={mobileReduced} />
+      {showFireworks && (
+        <Fireworks active={showFireworks} intensity={fireworksIntensity} mobileReduced={mobileReduced} />
+      )}
       {showFloatingCards && (
         <Suspense fallback={<LoadingFallback />}>
           <FloatingImages imagePaths={imagePaths} />

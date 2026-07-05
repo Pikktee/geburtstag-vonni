@@ -356,20 +356,20 @@ export function Fireworks({
     if (!coreRef.current || !sparkleRef.current || !glowRef.current) return;
 
     const mobile = mobileRef.current;
-    const level = intensityRef.current * (mobile ? 0.42 : 1);
-    coreMat.opacity = 0.25 + level * 0.4;
-    sparkleMat.opacity = 0.2 + level * 0.35;
-    glowMat.opacity = 0.08 + level * 0.14;
+    const level = intensityRef.current * (mobile ? 0.68 : 1);
+    coreMat.opacity = 0.25 + level * 0.45;
+    sparkleMat.opacity = 0.2 + level * 0.4;
+    glowMat.opacity = 0.08 + level * 0.18;
 
     if (active) {
       spawnTimer.current += delta;
       finaleTimer.current += delta;
 
       const maxRockets = mobile
-        ? Math.max(1, Math.round(2.2 * level))
+        ? Math.max(2, Math.round(4.5 * level))
         : Math.max(2, Math.round(9 * level));
       const spawnDelay = mobile
-        ? 0.75 + (1.1 - level * 0.5) + Math.random() * 0.55
+        ? 0.42 + (0.95 - level * 0.45) + Math.random() * 0.4
         : 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
 
       if (spawnTimer.current > spawnDelay && rocketsRef.current.length < maxRockets) {

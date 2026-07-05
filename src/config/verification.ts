@@ -41,6 +41,9 @@ export const VERIFICATION_QUESTIONS: VerificationQuestion[] = [
     correct: "Tryghed",
     wrongHint: "Das ist flasch! Tipp: Es ist ein dänisches Wort!",
     placeholder: "Antwort eingeben…",
+    helpAfterMs: 33_000,
+    helpButtonLabel: "Hä? Was soll das?.",
+    helpDialogMessage: "Schau doch mal in unserem Signal-Chat nach.",
   },
   {
     id: "shaqa-mobilje",

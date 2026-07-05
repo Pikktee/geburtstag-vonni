@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Scene3D } from "./components/Scene3D";
+import { FireworksOverlay } from "./components/FireworksOverlay";
 import { ConfettiOverlay } from "./components/ConfettiOverlay";
 import { ScamMarquee, BOTTOM_MARQUEE_TEXT, TOP_MARQUEE_TEXT } from "./components/ScamMarquee";
 import { GiftFlow } from "./components/GiftFlow";
@@ -117,9 +118,10 @@ export default function App() {
     setConfettiBurst((b) => b + 1);
 
     void beginCelebration().then((playing) => {
-      if (playing && !isPortraitMobile) {
-        window.setTimeout(() => playFireworkBurst(0.48), 1_500);
-        window.setTimeout(() => playFireworkBurst(0.4), 3_200);
+      if (playing) {
+        const burstVolume = isPortraitMobile ? 0.38 : 0.48;
+        window.setTimeout(() => playFireworkBurst(burstVolume), 1_500);
+        window.setTimeout(() => playFireworkBurst(burstVolume * 0.85), 3_200);
       }
     });
 
@@ -152,19 +154,18 @@ export default function App() {
       {!isFinale && <ScamMarquee text={TOP_MARQUEE_TEXT} duration={35} fixed="top" />}
 
       {!isFinale && (
-        <div className="celebration-layer" aria-hidden="true">
-          <Scene3D
-            imagePaths={imagePaths}
-            showFireworks={showFireworks}
-            fireworksIntensity={effectiveIntensity}
-          />
-          <ConfettiOverlay
-            active={showConfetti}
-            burst={confettiBurst > 0}
-            intensity={effectiveIntensity}
-            subtle={isPortraitMobile}
-          />
-        </div>
+        <>
+          <div className="celebration-layer" aria-hidden="true">
+            <Scene3D imagePaths={imagePaths} showFireworks={false} fireworksIntensity={effectiveIntensity} />
+            <ConfettiOverlay
+              active={showConfetti}
+              burst={confettiBurst > 0}
+              intensity={effectiveIntensity}
+              subtle={isPortraitMobile}
+            />
+          </div>
+          <FireworksOverlay active={showFireworks} intensity={effectiveIntensity} />
+        </>
       )}
 
       {mobileMontage && (
@@ -220,7 +221,7 @@ export default function App() {
       )}
 
       {started && (
-        <div className="ui-layer">
+        <div className={`ui-layer${showFireworks ? " ui-layer--celebrating" : ""}`}>
           <GiftFlow
             step={step}
             onStepChange={setStep}

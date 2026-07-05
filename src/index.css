@@ -61,6 +61,20 @@ button {
   overflow: hidden;
 }
 
+.fireworks-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fireworks-layer canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .confetti-canvas {
   position: absolute;
   inset: 0;
@@ -278,7 +292,7 @@ button {
 }
 
 .canvas-layer--mobile canvas {
-  opacity: 0.22;
+  opacity: 0.55;
 }
 
 @media (max-width: 768px) {
@@ -557,6 +571,55 @@ button {
   backdrop-filter: blur(16px) saturate(1.15);
   position: relative;
   z-index: 2;
+}
+
+.ui-layer--celebrating .scam-panel {
+  background: rgba(10, 0, 24, 0.58);
+  backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow:
+    0 0 0 2px var(--scam-red),
+    0 0 0 6px rgba(255, 230, 0, 0.1),
+    0 0 36px rgba(255, 0, 64, 0.28),
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    inset 0 0 40px rgba(155, 48, 255, 0.08);
+}
+
+.ui-layer--celebrating .panel-backdrop {
+  background: radial-gradient(
+    ellipse 85% 75% at 50% 45%,
+    rgba(6, 0, 16, 0.45) 0%,
+    rgba(6, 0, 16, 0.22) 55%,
+    transparent 78%
+  );
+}
+
+.ui-layer--celebrating .gift-flow__avatar,
+.ui-layer--celebrating .gift-flow__badge,
+.ui-layer--celebrating .scam-btn,
+.ui-layer--celebrating .gift-offer-box,
+.ui-layer--celebrating .captcha-step__input,
+.ui-layer--celebrating .captcha-step__submit,
+.ui-layer--celebrating .captcha-dialog {
+  position: relative;
+  z-index: 1;
+}
+
+.ui-layer--celebrating .gift-flow__title,
+.ui-layer--celebrating .gift-flow__date,
+.ui-layer--celebrating .gift-flow__eyebrow,
+.ui-layer--celebrating .gift-intro__text,
+.ui-layer--celebrating .gift-intro__signature,
+.ui-layer--celebrating .gift-offer-box__question,
+.ui-layer--celebrating .gift-offer-box__countdown,
+.ui-layer--celebrating .gift-declined p,
+.ui-layer--celebrating .captcha-header__title,
+.ui-layer--celebrating .captcha-header__sub,
+.ui-layer--celebrating .captcha-challenge-text,
+.ui-layer--celebrating .captcha-step__instruction,
+.ui-layer--celebrating .captcha-step__error {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.95),
+    0 0 14px rgba(8, 0, 18, 0.85);
 }
 
 .panel-backdrop {
@@ -983,6 +1046,23 @@ button {
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.ui-layer--celebrating .captcha-step {
+  background: rgba(12, 0, 28, 0.62) !important;
+  backdrop-filter: blur(8px);
+}
+
+.ui-layer--celebrating .captcha-step__header {
+  background: rgba(238, 243, 251, 0.55) !important;
+}
+
+.ui-layer--celebrating .captcha-step__visual {
+  background: rgba(248, 250, 252, 0.5) !important;
+}
+
+.ui-layer--celebrating .captcha-step__puzzle-area {
+  background: rgba(8, 0, 18, 0.35);
 }
 
 .captcha-step__header {
