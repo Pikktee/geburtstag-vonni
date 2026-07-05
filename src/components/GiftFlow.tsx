@@ -97,8 +97,8 @@ export function GiftFlow({
       note: request.note,
       submittedAt: request.submittedAt,
     });
-    onPlayPartyHorn();
-    onPlaySfx("party-whoosh", 0.45);
+    onPlayPartyHorn(0.68);
+    onPlaySfx("party-whoosh", 0.38);
     void onPlayFinale();
     onStepChange("confirmed");
   };
