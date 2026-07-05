@@ -613,23 +613,27 @@ button {
 }
 
 .ui-layer--celebrating .scam-panel {
-  background: rgba(10, 0, 24, 0.58);
-  backdrop-filter: blur(10px) saturate(1.1);
+  background: rgba(10, 0, 24, 0.38);
+  backdrop-filter: blur(5px) saturate(1.06);
   box-shadow:
     0 0 0 2px var(--scam-red),
     0 0 0 6px rgba(255, 230, 0, 0.1),
     0 0 36px rgba(255, 0, 64, 0.28),
-    0 16px 48px rgba(0, 0, 0, 0.55),
-    inset 0 0 40px rgba(155, 48, 255, 0.08);
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    inset 0 0 28px rgba(155, 48, 255, 0.05);
 }
 
 .ui-layer--celebrating .panel-backdrop {
   background: radial-gradient(
     ellipse 85% 75% at 50% 45%,
-    rgba(6, 0, 16, 0.45) 0%,
-    rgba(6, 0, 16, 0.22) 55%,
+    rgba(6, 0, 16, 0.28) 0%,
+    rgba(6, 0, 16, 0.12) 55%,
     transparent 78%
   );
+}
+
+.ui-layer--celebrating .gift-offer-box {
+  background: linear-gradient(90deg, rgba(255, 0, 64, 0.22), rgba(155, 48, 255, 0.22));
 }
 
 .ui-layer--celebrating .gift-flow__avatar,
@@ -643,7 +647,6 @@ button {
   z-index: 1;
 }
 
-.ui-layer--celebrating .gift-flow__title,
 .ui-layer--celebrating .gift-flow__date,
 .ui-layer--celebrating .gift-flow__eyebrow,
 .ui-layer--celebrating .gift-intro__text,
@@ -657,6 +660,14 @@ button {
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.95),
     0 0 14px rgba(8, 0, 18, 0.85);
+}
+
+.ui-layer--celebrating .rainbow-text {
+  text-shadow: none;
+  filter:
+    drop-shadow(0 2px 0 rgba(0, 0, 0, 0.9))
+    drop-shadow(0 3px 10px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 16px rgba(255, 230, 0, 0.35));
 }
 
 .panel-backdrop {
@@ -875,6 +886,7 @@ button {
   font-size: clamp(1.65rem, 6.8vw, 2.65rem);
   line-height: 1.08;
   animation-duration: 4s;
+  -webkit-text-fill-color: transparent;
 }
 
 .gift-flow--compact .gift-flow__title {
@@ -1086,20 +1098,71 @@ button {
 }
 
 .ui-layer--celebrating .captcha-step {
-  background: rgba(12, 0, 28, 0.62) !important;
-  backdrop-filter: blur(8px);
+  background: rgba(12, 0, 28, 0.42) !important;
+  backdrop-filter: blur(4px);
 }
 
 .ui-layer--celebrating .captcha-step__header {
-  background: rgba(238, 243, 251, 0.55) !important;
+  background: rgba(238, 243, 251, 0.48) !important;
 }
 
 .ui-layer--celebrating .captcha-step__visual {
-  background: rgba(255, 252, 245, 0.9) !important;
+  background: rgba(255, 252, 245, 0.82) !important;
 }
 
 .ui-layer--celebrating .captcha-step__puzzle-area {
-  background: rgba(8, 0, 18, 0.35);
+  background: rgba(8, 0, 18, 0.22);
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .ui-layer--celebrating .scam-panel {
+    background: rgba(10, 0, 24, 0.22);
+    backdrop-filter: blur(2px) saturate(1.02);
+    box-shadow:
+      0 0 0 2px var(--scam-red),
+      0 0 0 6px rgba(255, 230, 0, 0.08),
+      0 0 32px rgba(255, 0, 64, 0.32),
+      0 12px 36px rgba(0, 0, 0, 0.35),
+      inset 0 0 18px rgba(155, 48, 255, 0.04);
+  }
+
+  .ui-layer--celebrating .panel-backdrop {
+    background: radial-gradient(
+      ellipse 88% 78% at 50% 45%,
+      rgba(6, 0, 16, 0.14) 0%,
+      rgba(6, 0, 16, 0.05) 55%,
+      transparent 80%
+    );
+  }
+
+  .ui-layer--celebrating .gift-offer-box {
+    background: linear-gradient(90deg, rgba(255, 0, 64, 0.14), rgba(155, 48, 255, 0.14));
+  }
+
+  .ui-layer--celebrating .gift-flow__date,
+  .ui-layer--celebrating .gift-flow__eyebrow,
+  .ui-layer--celebrating .gift-intro__text,
+  .ui-layer--celebrating .gift-intro__signature,
+  .ui-layer--celebrating .gift-offer-box__question,
+  .ui-layer--celebrating .gift-offer-box__countdown {
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.98),
+      0 0 10px rgba(8, 0, 18, 0.92),
+      0 0 4px rgba(0, 0, 0, 0.85);
+  }
+
+  .ui-layer--celebrating .captcha-step {
+    background: rgba(12, 0, 28, 0.26) !important;
+    backdrop-filter: blur(2px);
+  }
+
+  .ui-layer--celebrating .captcha-step__header {
+    background: rgba(238, 243, 251, 0.38) !important;
+  }
+
+  .ui-layer--celebrating .captcha-step__visual {
+    background: rgba(255, 252, 245, 0.78) !important;
+  }
 }
 
 .captcha-step__header {
