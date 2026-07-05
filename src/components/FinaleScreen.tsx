@@ -184,7 +184,9 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
             scale: { delay: 1.8, duration: 2.5, repeat: Infinity },
           }}
         >
-          Ich hab dich lieb, Vonnilein. Happy Birthday. 💕
+          Ich hab dich lieb, Vonnilein.
+          <br />
+          Happy Birthday. 💕
         </motion.p>
       </div>
     </div>
