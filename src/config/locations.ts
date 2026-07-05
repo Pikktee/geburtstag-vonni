@@ -2,7 +2,6 @@ import type { LOCATION_IMAGES } from "../types";
 
 export interface LocationMeta {
   label: string;
-  tagline: string;
   laneY: number;
   depthZ: number;
   direction: 1 | -1;
@@ -13,7 +12,6 @@ export interface LocationMeta {
 export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMeta> = {
   beirut: {
     label: "Beirut",
-    tagline: "Goldene Küste · Libanon",
     laneY: 5.4,
     depthZ: -4.2,
     direction: 1,
@@ -21,8 +19,7 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
     startX: -22,
   },
   sauna: {
-    label: "Finnische Sauna",
-    tagline: "Wellness & Dampf",
+    label: "Sauna",
     laneY: 2.2,
     depthZ: -7.4,
     direction: -1,
@@ -31,7 +28,6 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
   },
   bielefeld: {
     label: "Bielefeld",
-    tagline: "Geheimtipp · NRW",
     laneY: -1.2,
     depthZ: -5.6,
     direction: 1,
@@ -40,7 +36,6 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
   },
   niedwald: {
     label: "Niedwald",
-    tagline: "Herbstlicher Waldspaziergang",
     laneY: -4.0,
     depthZ: -9.2,
     direction: -1,
@@ -49,7 +44,6 @@ export const LOCATION_META: Record<(typeof LOCATION_IMAGES)[number], LocationMet
   },
   "thai-beach": {
     label: "Thailand",
-    tagline: "Paradiesstrand · Andamanensee",
     laneY: -6.8,
     depthZ: -6.4,
     direction: 1,

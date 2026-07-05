@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Scene3D } from "./components/Scene3D";
 import { ConfettiOverlay } from "./components/ConfettiOverlay";
 import { ScamMarquee, BOTTOM_MARQUEE_TEXT, TOP_MARQUEE_TEXT } from "./components/ScamMarquee";
@@ -6,6 +6,11 @@ import { GiftFlow } from "./components/GiftFlow";
 import { useAudio } from "./hooks/useAudio";
 import type { AssetManifest, FlowStep } from "./types";
 import { LOCATION_IMAGES } from "./types";
+import {
+  computeCelebrationIntensity,
+  fireworkIntervalMs,
+  fireworkVolume,
+} from "./utils/celebrationIntensity";
 
 const DEFAULT_IMAGES: Record<string, string> = Object.fromEntries([
   ...LOCATION_IMAGES.map((id) => [id, `/assets/images/${id}.jpg`]),
@@ -19,7 +24,25 @@ export default function App() {
   const [step, setStep] = useState<FlowStep>("intro");
   const [confettiBurst, setConfettiBurst] = useState(0);
   const [started, setStarted] = useState(false);
-  const { unlockAudio, startMusic, playSfx } = useAudio(manifest?.audio);
+  const [celebrationIntensity, setCelebrationIntensity] = useState(1);
+  const startedAtRef = useRef<number | null>(null);
+  const { beginCelebration, playSfx, playFireworkBurst, playPartyHorn, playButtonClick, playFinaleJingle, musicPlayingRef } =
+    useAudio(manifest?.audio);
+
+  useEffect(() => {
+    const onButtonClick = (event: MouseEvent) => {
+      if (event.button !== 0) return;
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (!target.closest("button:not(:disabled)")) return;
+      playButtonClick();
+    };
+
+    document.addEventListener("click", onButtonClick, true);
+    return () => document.removeEventListener("click", onButtonClick, true);
+  }, [playButtonClick]);
+
+  const isFinale = step === "confirmed";
 
   useEffect(() => {
     fetch("/assets/manifest.json")
@@ -30,41 +53,90 @@ export default function App() {
       .catch(() => undefined);
   }, []);
 
+  useEffect(() => {
+    if (!started || startedAtRef.current === null || isFinale) return;
+
+    const updateIntensity = () => {
+      setCelebrationIntensity(
+        computeCelebrationIntensity(startedAtRef.current!, Date.now(), step),
+      );
+    };
+
+    updateIntensity();
+    const id = window.setInterval(updateIntensity, 2500);
+    return () => window.clearInterval(id);
+  }, [started, step, isFinale]);
+
+  useEffect(() => {
+    if (!started || startedAtRef.current === null || isFinale) return;
+
+    let cancelled = false;
+    let timeoutId = 0;
+
+    const schedule = () => {
+      if (cancelled) return;
+
+      const intensity = computeCelebrationIntensity(startedAtRef.current!, Date.now(), step);
+      const isMusicPlaying = musicPlayingRef.current;
+      const volume = fireworkVolume(intensity, isMusicPlaying);
+      playFireworkBurst(volume);
+
+      const delay = fireworkIntervalMs(intensity, isMusicPlaying);
+      timeoutId = window.setTimeout(schedule, delay);
+    };
+
+    const initialDelay = musicPlayingRef.current ? 1_400 : 400;
+    timeoutId = window.setTimeout(schedule, initialDelay);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [started, step, isFinale, playFireworkBurst, musicPlayingRef]);
+
+  const handlePlayFinale = useCallback(() => {
+    void playFinaleJingle();
+  }, [playFinaleJingle]);
+
   const imagePaths = { ...DEFAULT_IMAGES, ...manifest?.images };
 
   const startExperience = useCallback(() => {
     if (started) return;
+    startedAtRef.current = Date.now();
     setStarted(true);
-    unlockAudio();
-    startMusic();
-    playSfx("fireworks", 0.3);
-    playSfx("confetti-pop", 0.5);
     setConfettiBurst((b) => b + 1);
-    setTimeout(() => setStep("offer"), 1200);
-  }, [started, unlockAudio, startMusic, playSfx]);
 
-  useEffect(() => {
-    if (!started) return;
-    const id = window.setInterval(() => {
-      playSfx("fireworks", 0.28);
-    }, 5000);
-    return () => window.clearInterval(id);
-  }, [started, playSfx]);
+    void beginCelebration().then((playing) => {
+      if (playing) {
+        window.setTimeout(() => playFireworkBurst(0.48), 1_500);
+        window.setTimeout(() => playFireworkBurst(0.4), 3_200);
+      }
+    });
+
+    setTimeout(() => setStep("offer"), 1_200);
+  }, [started, beginCelebration, playFireworkBurst]);
 
   const handleAccept = () => {
     setConfettiBurst((b) => b + 1);
-    playSfx("confetti-pop", 0.6);
   };
 
-  const showFireworks = started && step !== "confirmed";
-  const showConfetti = started;
+  const showFireworks = started && !isFinale;
+  const showConfetti = started && !isFinale;
 
   return (
     <div className="app">
-      <ScamMarquee text={TOP_MARQUEE_TEXT} duration={35} />
+      {!isFinale && <ScamMarquee text={TOP_MARQUEE_TEXT} duration={35} fixed="top" />}
 
-      <Scene3D imagePaths={imagePaths} showFireworks={showFireworks} />
-      <ConfettiOverlay active={showConfetti} burst={confettiBurst > 0} />
+      {!isFinale && (
+        <Scene3D
+          imagePaths={imagePaths}
+          showFireworks={showFireworks}
+          fireworksIntensity={celebrationIntensity}
+        />
+      )}
+      {!isFinale && (
+        <ConfettiOverlay active={showConfetti} burst={confettiBurst > 0} intensity={celebrationIntensity} />
+      )}
 
       {!started && (
         <div
@@ -98,8 +170,8 @@ export default function App() {
               Hast du heute Geburtstag?! Dann hol es dir JETZT ab!!!
               <br />
               <br />
-              Klick auf <strong style={{ color: "var(--scam-yellow)" }}>OK</strong> — bevor die
-              Reservierung an jemand anderen geht!!!
+              Klick auf <strong style={{ color: "var(--scam-yellow)" }}>OK</strong> — bevor das
+              Angebot abläuft!!!
             </p>
             <button
               id="audio-unlock"
@@ -122,12 +194,14 @@ export default function App() {
             onAccept={handleAccept}
             onDecline={() => setStep("declined")}
             onPlaySfx={playSfx}
+            onPlayPartyHorn={playPartyHorn}
+            onPlayFinale={handlePlayFinale}
             imagePaths={imagePaths}
           />
         </div>
       )}
 
-      <ScamMarquee text={BOTTOM_MARQUEE_TEXT} fixed reverse duration={55} />
+      {!isFinale && <ScamMarquee text={BOTTOM_MARQUEE_TEXT} fixed="bottom" reverse duration={55} />}
     </div>
   );
 }

@@ -59,7 +59,7 @@ export const VERIFICATION_QUESTIONS: VerificationQuestion[] = [
     id: "koala-alpaka-puzzle",
     type: "sliding-puzzle",
     label:
-      "Letzte Prüfung: Bringe Vonnilein und Hennilein wieder zusammen — ordne die neun Kacheln in die richtige Reihenfolge!",
+      "Bringe Vonnilein und Hennilein wieder zusammen — ordne die neun Kacheln in die richtige Reihenfolge!",
     wrongHint: "Noch nicht ganz! Schieb die Kacheln weiter, bis Koala und Alpaka wieder ein Paar sind.",
   },
 ];

@@ -31,7 +31,7 @@ export function moveTile(board: PuzzleBoard, tileIndex: number): PuzzleBoard | n
   return next;
 }
 
-export function shuffleBoard(moves = 48): PuzzleBoard {
+export function shuffleBoard(moves = 14): PuzzleBoard {
   let board = createSolvedBoard();
 
   for (let i = 0; i < moves; i += 1) {

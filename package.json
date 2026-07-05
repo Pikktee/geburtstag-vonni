@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "generate": "tsx scripts/generate-assets.ts",
     "generate:audio": "tsx scripts/generate-assets.ts --force-audio",
+    "generate:music": "tsx scripts/generate-assets.ts --force-music",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {

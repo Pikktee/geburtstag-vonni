@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { SlidingPuzzle } from "./SlidingPuzzle";
 import {
   isAnswerCorrect,
@@ -15,6 +15,7 @@ import {
 interface IdentityCaptchaProps {
   onSuccess: () => void;
   puzzleImageSrc?: string;
+  onPlayWarning?: () => void;
 }
 
 const CAPTCHA_THEMES = [
@@ -46,6 +47,10 @@ const CAPTCHA_THEMES = [
     accent: "#b45309",
   },
 ] as const;
+
+const IDENTITY_TITLE = "Identitätsprüfung";
+
+type CaptchaIntroPhase = "blink" | "settle" | "ready";
 
 const FAKE_FAIL_MESSAGES = [
   "Verifizierung unterbrochen. Bitte erneut bestätigen.",
@@ -406,6 +411,7 @@ function buildWrongAnswerMessage(
 export function IdentityCaptcha({
   onSuccess,
   puzzleImageSrc = "/assets/images/koala-alpaka-frankfurt.jpg",
+  onPlayWarning,
 }: IdentityCaptchaProps) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selection, setSelection] = useState("");
@@ -413,9 +419,30 @@ export function IdentityCaptcha({
   const [isBusy, setIsBusy] = useState(false);
   const [attemptCount, setAttemptCount] = useState(1);
   const [wrongAttemptsForQuestion, setWrongAttemptsForQuestion] = useState(0);
+  const [introPhase, setIntroPhase] = useState<CaptchaIntroPhase>("blink");
+  const warningPlayedRef = useRef(false);
 
   const currentQuestion = VERIFICATION_QUESTIONS[questionIndex];
   const isPuzzleStep = isSlidingPuzzleQuestion(currentQuestion);
+
+  useEffect(() => {
+    const settleTimer = window.setTimeout(() => setIntroPhase("settle"), 1400);
+    const readyTimer = window.setTimeout(() => setIntroPhase("ready"), 2200);
+
+    return () => {
+      window.clearTimeout(settleTimer);
+      window.clearTimeout(readyTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (introPhase !== "blink" || warningPlayedRef.current) return;
+    warningPlayedRef.current = true;
+
+    // Kurz verzögert, damit Sound und erste Blink-Phase zusammen starten
+    const alarmTimer = window.setTimeout(() => onPlayWarning?.(), 60);
+    return () => window.clearTimeout(alarmTimer);
+  }, [introPhase, onPlayWarning]);
 
   useEffect(() => {
     setWrongAttemptsForQuestion(0);
@@ -490,45 +517,82 @@ export function IdentityCaptcha({
     [isBusy, questionIndex, onSuccess],
   );
 
-  return (
-    <div className="identity-captcha">
-      <div className="captcha-header">
-        <span className="captcha-header__icon">🛡️</span>
-        <div>
-          <p className="captcha-header__title">Sicherheitsüberprüfung</p>
-          <p className="captcha-header__sub">
-            Bitte löse das Captcha, um fortzufahren.
-          </p>
-        </div>
-      </div>
+  const showSplash = introPhase === "blink";
+  const showHeader = introPhase === "settle" || introPhase === "ready";
+  const showCaptcha = introPhase === "ready";
 
-      <AnimatePresence mode="wait">
-        {isPuzzleStep ? (
-          <CaptchaPuzzleStep
-            key={`captcha-${questionIndex}`}
-            questionIndex={questionIndex}
-            puzzleImageSrc={puzzleImageSrc}
-            onSubmit={handlePuzzleSubmit}
-            error={error}
-            isBusy={isBusy}
-            attemptCount={attemptCount}
-          />
-        ) : (
-          <CaptchaStep
-            key={`captcha-${questionIndex}`}
-            questionIndex={questionIndex}
-            selection={selection}
-            onSelect={(value) => {
-              setSelection(value);
-              setError(null);
-            }}
-            onSubmit={handleTextSubmit}
-            error={error}
-            isBusy={isBusy}
-            attemptCount={attemptCount}
-          />
-        )}
-      </AnimatePresence>
+  return (
+    <div className={`identity-captcha${showSplash ? " identity-captcha--splash-active" : ""}`}>
+      <LayoutGroup id="captcha-identity-intro">
+        {showSplash ? (
+          <div className="captcha-title-anchor captcha-title-anchor--splash" aria-hidden={!showSplash}>
+            <motion.p
+              layoutId="captcha-identity-title"
+              className="captcha-title--splash captcha-title--blink"
+              transition={{ layout: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } }}
+            >
+              {IDENTITY_TITLE}
+            </motion.p>
+          </div>
+        ) : showHeader ? (
+          <div className="captcha-header">
+            <span className="captcha-header__icon">🛡️</span>
+            <div>
+              <motion.p
+                layoutId="captcha-identity-title"
+                className="captcha-header__title"
+                transition={{ layout: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } }}
+              >
+                {IDENTITY_TITLE}
+              </motion.p>
+              <motion.p
+                className="captcha-header__sub"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: showCaptcha ? 1 : 0, y: showCaptcha ? 0 : 6 }}
+                transition={{ duration: 0.35, delay: showCaptcha ? 0.1 : 0 }}
+              >
+                Bitte löse das Captcha, um fortzufahren.
+              </motion.p>
+            </div>
+          </div>
+        ) : null}
+      </LayoutGroup>
+
+      {showCaptcha && (
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <AnimatePresence mode="wait">
+            {isPuzzleStep ? (
+              <CaptchaPuzzleStep
+                key={`captcha-${questionIndex}`}
+                questionIndex={questionIndex}
+                puzzleImageSrc={puzzleImageSrc}
+                onSubmit={handlePuzzleSubmit}
+                error={error}
+                isBusy={isBusy}
+                attemptCount={attemptCount}
+              />
+            ) : (
+              <CaptchaStep
+                key={`captcha-${questionIndex}`}
+                questionIndex={questionIndex}
+                selection={selection}
+                onSelect={(value) => {
+                  setSelection(value);
+                  setError(null);
+                }}
+                onSubmit={handleTextSubmit}
+                error={error}
+                isBusy={isBusy}
+                attemptCount={attemptCount}
+              />
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   );
 }

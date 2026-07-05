@@ -276,7 +276,7 @@ function burstShockwave(pool: Particle[], origin: THREE.Vector3, color: THREE.Co
   }
 }
 
-export function Fireworks({ active }: { active: boolean }) {
+export function Fireworks({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
   const coreRef = useRef<THREE.Points>(null);
   const sparkleRef = useRef<THREE.Points>(null);
   const glowRef = useRef<THREE.Points>(null);
@@ -286,6 +286,8 @@ export function Fireworks({ active }: { active: boolean }) {
   const spawnTimer = useRef(0);
   const finaleTimer = useRef(0);
   const pointLightRef = useRef<THREE.PointLight>(null);
+  const intensityRef = useRef(intensity);
+  intensityRef.current = Math.max(0.15, Math.min(1, intensity));
 
   const { coreGeo, sparkleGeo, glowGeo, coreMat, sparkleMat, glowMat } = useMemo(() => {
     const mkGeo = (withSize = false) => {
@@ -329,9 +331,9 @@ export function Fireworks({ active }: { active: boolean }) {
     };
   }, []);
 
-  const triggerExplosion = (origin: THREE.Vector3, pattern: FireworkPattern, color: THREE.Color, intensity: number) => {
+  const triggerExplosion = (origin: THREE.Vector3, pattern: FireworkPattern, color: THREE.Color, burstIntensity: number) => {
     burstShockwave(particlesRef.current, origin, color);
-    explode(particlesRef.current, origin, pattern, color, intensity);
+    explode(particlesRef.current, origin, pattern, color, burstIntensity);
     flashesRef.current.push({
       position: origin.clone(),
       color: color.clone(),
@@ -343,19 +345,30 @@ export function Fireworks({ active }: { active: boolean }) {
   useFrame((_, delta) => {
     if (!coreRef.current || !sparkleRef.current || !glowRef.current) return;
 
+    const level = intensityRef.current;
+    coreMat.opacity = 0.25 + level * 0.4;
+    sparkleMat.opacity = 0.2 + level * 0.35;
+    glowMat.opacity = 0.08 + level * 0.14;
+
     if (active) {
       spawnTimer.current += delta;
       finaleTimer.current += delta;
 
-      if (spawnTimer.current > 0.2 + Math.random() * 0.35 && rocketsRef.current.length < 9) {
+      const maxRockets = Math.max(2, Math.round(9 * level));
+      const spawnDelay = 0.2 + (1.1 - level * 0.75) + Math.random() * (0.35 + (1 - level) * 0.5);
+
+      if (spawnTimer.current > spawnDelay && rocketsRef.current.length < maxRockets) {
         spawnTimer.current = 0;
-        rocketsRef.current.push(spawnRocket());
+        rocketsRef.current.push(spawnRocket(undefined, 0.45 + level * 0.55));
       }
 
-      if (finaleTimer.current > 6.5) {
+      if (level > 0.65 && finaleTimer.current > 6.5) {
         finaleTimer.current = 0;
         [-10, -5, 5, 10].forEach((fx, i) => {
-          window.setTimeout(() => rocketsRef.current.push(spawnRocket(fx, 1.1)), i * 90);
+          window.setTimeout(
+            () => rocketsRef.current.push(spawnRocket(fx, 0.7 + level * 0.4)),
+            i * 90,
+          );
         });
       }
     }
@@ -394,10 +407,19 @@ export function Fireworks({ active }: { active: boolean }) {
 
       if (rocket.life >= rocket.maxLife || rocket.velocity.y <= 0.3 || rocket.position.y > 6.5) {
         triggerExplosion(rocket.position.clone(), rocket.pattern, rocket.color, rocket.intensity);
-        if (Math.random() > 0.35) {
+        if (Math.random() > 0.35 + (1 - intensityRef.current) * 0.45) {
           const pos = rocket.position.clone();
           const pat = Math.random() > 0.5 ? "glitter" : ("ring" as FireworkPattern);
-          window.setTimeout(() => triggerExplosion(pos.clone().add(new THREE.Vector3(0, -0.25, 0)), pat, pickColor(), 0.55), 140);
+          window.setTimeout(
+            () =>
+              triggerExplosion(
+                pos.clone().add(new THREE.Vector3(0, -0.25, 0)),
+                pat,
+                pickColor(),
+                0.55 * intensityRef.current,
+              ),
+            140,
+          );
         }
         return false;
       }
@@ -417,7 +439,7 @@ export function Fireworks({ active }: { active: boolean }) {
     flashesRef.current = flashesRef.current.filter((f) => f.life < f.maxLife);
 
     if (pointLightRef.current) {
-      pointLightRef.current.intensity = flashIntensity * 1.4;
+      pointLightRef.current.intensity = flashIntensity * 1.4 * intensityRef.current;
       pointLightRef.current.color.copy(flashColor);
     }
 

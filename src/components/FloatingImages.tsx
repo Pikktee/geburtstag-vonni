@@ -42,7 +42,6 @@ interface FloatingImagesProps {
 function DestinationCard({
   texture,
   label,
-  tagline,
   laneY,
   depthZ,
   direction,
@@ -51,7 +50,6 @@ function DestinationCard({
 }: {
   texture: THREE.Texture;
   label: string;
-  tagline: string;
   laneY: number;
   depthZ: number;
   direction: 1 | -1;
@@ -125,9 +123,7 @@ function DestinationCard({
         style={{ pointerEvents: "none", userSelect: "none" }}
       >
         <div className="dest-label dest-label--overlay">
-          <span className="dest-label__eyebrow">✈ Reiseziel</span>
           <span className="dest-label__name">{label}</span>
-          <span className="dest-label__tagline">{tagline}</span>
         </div>
       </Html>
     </group>
@@ -162,7 +158,6 @@ export function FloatingImages({ imagePaths }: FloatingImagesProps) {
           key={card.id}
           texture={card.texture}
           label={card.label}
-          tagline={card.tagline}
           laneY={card.laneY}
           depthZ={card.depthZ}
           direction={card.direction}

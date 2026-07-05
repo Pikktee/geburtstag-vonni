@@ -7,12 +7,10 @@ interface MobileImageStripProps {
 
 function MobileCard({
   label,
-  tagline,
   src,
   tilt,
 }: {
   label: string;
-  tagline: string;
   src: string;
   tilt: number;
 }) {
@@ -21,9 +19,7 @@ function MobileCard({
       <img className="mobile-card__img" src={src} alt="" loading="lazy" decoding="async" />
       <div className="mobile-card__shade" aria-hidden="true" />
       <div className="mobile-card__label">
-        <span className="mobile-card__eyebrow">✈ Reiseziel</span>
         <span className="mobile-card__name">{label}</span>
-        <span className="mobile-card__tagline">{tagline}</span>
       </div>
     </div>
   );
@@ -42,7 +38,6 @@ function MobileRow({
   const cards = ids.map((id, i) => ({
     id,
     label: LOCATION_META[id].label,
-    tagline: LOCATION_META[id].tagline,
     src: imagePaths[id] ?? `/assets/images/${id}.jpg`,
     tilt: (i % 2 === 0 ? 1 : -1) * (2 + (i % 3)),
   }));

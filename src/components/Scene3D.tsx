@@ -10,6 +10,7 @@ import { useIsMobile } from "../hooks/useIsMobile";
 interface Scene3DProps {
   imagePaths: Record<string, string>;
   showFireworks: boolean;
+  fireworksIntensity?: number;
 }
 
 function LoadingFallback() {
@@ -33,13 +34,14 @@ function SceneContent({
   imagePaths,
   showFireworks,
   showFloatingCards,
+  fireworksIntensity = 1,
 }: Scene3DProps & { showFloatingCards: boolean }) {
   return (
     <>
       <color attach="background" args={["#0a0014"]} />
       <fog attach="fog" args={["#0a0014", 28, 55]} />
       <Stars radius={80} depth={40} count={1800} factor={2} saturation={0.4} fade speed={0.5} />
-      <Fireworks active={showFireworks} />
+      <Fireworks active={showFireworks} intensity={fireworksIntensity} />
       {showFloatingCards && (
         <Suspense fallback={<LoadingFallback />}>
           <FloatingImages imagePaths={imagePaths} />
@@ -50,7 +52,7 @@ function SceneContent({
   );
 }
 
-export function Scene3D({ imagePaths, showFireworks }: Scene3DProps) {
+export function Scene3D({ imagePaths, showFireworks, fireworksIntensity = 1 }: Scene3DProps) {
   const isMobile = useIsMobile();
 
   return (
@@ -65,6 +67,7 @@ export function Scene3D({ imagePaths, showFireworks }: Scene3DProps) {
           imagePaths={imagePaths}
           showFireworks={showFireworks}
           showFloatingCards={!isMobile}
+          fireworksIntensity={fireworksIntensity}
         />
       </Canvas>
     </div>

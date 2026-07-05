@@ -4,6 +4,7 @@ import confetti from "canvas-confetti";
 interface ConfettiOverlayProps {
   active: boolean;
   burst?: boolean;
+  intensity?: number;
 }
 
 const COLORS = ["#ff0040", "#ffe600", "#00ff66", "#ff69b4", "#9b30ff", "#0066ff", "#ffffff"];
@@ -23,11 +24,12 @@ function getHeartShape() {
 
 const BASE_OPTS = { flat: false, disableForReducedMotion: true };
 
-function fireEdgeBursts() {
+function fireEdgeBursts(scale = 1) {
   const shapes: ConfettiShape[] = [getHeartShape(), "star", "circle"];
+  const count = Math.max(12, Math.round(45 * scale));
   confetti({
     ...BASE_OPTS,
-    particleCount: 45,
+    particleCount: count,
     angle: 58,
     spread: 55,
     origin: { x: 0.08, y: 0.65 },
@@ -39,7 +41,7 @@ function fireEdgeBursts() {
   });
   confetti({
     ...BASE_OPTS,
-    particleCount: 45,
+    particleCount: count,
     angle: 122,
     spread: 55,
     origin: { x: 0.92, y: 0.65 },
@@ -51,10 +53,11 @@ function fireEdgeBursts() {
   });
 }
 
-function fireTopShower() {
+function fireTopShower(scale = 1) {
+  const count = Math.max(6, Math.round(18 * scale));
   confetti({
     ...BASE_OPTS,
-    particleCount: 18,
+    particleCount: count,
     spread: 70,
     startVelocity: 22,
     origin: { x: Math.random() * 0.35 + 0.05, y: -0.02 },
@@ -67,7 +70,7 @@ function fireTopShower() {
   });
   confetti({
     ...BASE_OPTS,
-    particleCount: 18,
+    particleCount: count,
     spread: 70,
     startVelocity: 22,
     origin: { x: Math.random() * 0.35 + 0.6, y: -0.02 },
@@ -80,11 +83,11 @@ function fireTopShower() {
   });
 }
 
-function fireCornerPop() {
+function fireCornerPop(scale = 1) {
   const x = Math.random() > 0.5 ? 0.12 : 0.88;
   confetti({
     ...BASE_OPTS,
-    particleCount: 35,
+    particleCount: Math.max(10, Math.round(35 * scale)),
     angle: x < 0.5 ? 45 : 135,
     spread: 50,
     origin: { x, y: 0.78 },
@@ -121,8 +124,9 @@ function createPiece(id: number): FallingPiece {
   };
 }
 
-function FallingParticles({ active }: { active: boolean }) {
-  const [pieces] = useState(() => Array.from({ length: 28 }, (_, i) => createPiece(i)));
+function FallingParticles({ active, intensity = 1 }: { active: boolean; intensity?: number }) {
+  const pieceCount = Math.max(8, Math.round(28 * intensity));
+  const [pieces] = useState(() => Array.from({ length: pieceCount }, (_, i) => createPiece(i)));
 
   if (!active) return null;
 
@@ -148,16 +152,17 @@ function FallingParticles({ active }: { active: boolean }) {
   );
 }
 
-export function ConfettiOverlay({ active, burst }: ConfettiOverlayProps) {
+export function ConfettiOverlay({ active, burst, intensity = 1 }: ConfettiOverlayProps) {
   const edgeInterval = useRef<number | null>(null);
   const showerInterval = useRef<number | null>(null);
   const cornerInterval = useRef<number | null>(null);
+  const level = Math.max(0.2, Math.min(1, intensity));
 
   const fireBurst = useCallback(() => {
-    fireEdgeBursts();
-    fireTopShower();
-    fireCornerPop();
-  }, []);
+    fireEdgeBursts(level);
+    fireTopShower(level);
+    fireCornerPop(level);
+  }, [level]);
 
   useEffect(() => {
     if (burst) fireBurst();
@@ -176,16 +181,16 @@ export function ConfettiOverlay({ active, burst }: ConfettiOverlayProps) {
 
     getHeartShape();
     fireBurst();
-    edgeInterval.current = window.setInterval(fireEdgeBursts, 2800);
-    showerInterval.current = window.setInterval(fireTopShower, 900);
-    cornerInterval.current = window.setInterval(fireCornerPop, 2200);
+    edgeInterval.current = window.setInterval(() => fireEdgeBursts(level), 2800 / level);
+    showerInterval.current = window.setInterval(() => fireTopShower(level), 900 / level);
+    cornerInterval.current = window.setInterval(() => fireCornerPop(level), 2200 / level);
 
     return () => {
       [edgeInterval, showerInterval, cornerInterval].forEach((ref) => {
         if (ref.current) window.clearInterval(ref.current);
       });
     };
-  }, [active, fireBurst]);
+  }, [active, fireBurst, level]);
 
-  return <FallingParticles active={active} />;
+  return <FallingParticles active={active} intensity={level} />;
 }

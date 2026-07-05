@@ -13,6 +13,8 @@
     "koala-alpaka-frankfurt": "/assets/images/koala-alpaka-frankfurt.jpg"
   },
   "audio": {
+    "birthday-intro-jingle": "/assets/audio/birthday-intro-jingle.mp3",
+    "birthday-finale-jingle": "/assets/audio/birthday-finale-jingle.mp3",
     "birthday-soundtrack": "/assets/audio/birthday-soundtrack.mp3",
     "firework-whistle": "/assets/audio/firework-whistle.mp3",
     "firework-crackle": "/assets/audio/firework-crackle.mp3",
@@ -23,7 +25,13 @@
     "confetti-pop": "/assets/audio/confetti-pop.mp3",
     "win-fanfare": "/assets/audio/win-fanfare.mp3",
     "cash-register": "/assets/audio/cash-register.mp3",
-    "magic-sparkle": "/assets/audio/magic-sparkle.mp3"
+    "magic-sparkle": "/assets/audio/magic-sparkle.mp3",
+    "party-horn-2": "/assets/audio/party-horn-2.mp3",
+    "party-horn-3": "/assets/audio/party-horn-3.mp3",
+    "warning-alert": "/assets/audio/warning-alert.mp3",
+    "decline-whaaat": "/assets/audio/decline-whaaat.mp3",
+    "decline-zonk": "/assets/audio/decline-zonk.mp3",
+    "ui-click": "/assets/audio/ui-click.mp3"
   },
-  "generatedAt": "2026-07-05T17:53:51.820Z"
+  "generatedAt": "2026-07-05T19:33:22.409Z"
 }
