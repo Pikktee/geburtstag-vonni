@@ -29,8 +29,8 @@ type SfxKey = Exclude<AudioKey, "birthday-intro-jingle" | "birthday-finale-jingl
 const INTRO_DURATION_MS = 30_000;
 const MUSIC_VOLUME = 0.74;
 const MUSIC_FADE_IN_MS = 1_100;
-const FINALE_VOLUME = 0.60;
-const PARTY_HORN_VOLUME = 0.78;
+const FINALE_VOLUME = 0.48;
+const PARTY_HORN_VOLUME = 0.55;
 const BUTTON_CLICK_VOLUME = 0.36;
 const SFX_FADE_IN_MS = 120;
 
