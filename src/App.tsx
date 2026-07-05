@@ -13,6 +13,7 @@ import {
   computeCelebrationIntensity,
   fireworkIntervalMs,
   fireworkVolume,
+  fireworkCalmFactor,
   scaleCelebrationForMobile,
   scaleFireworksForMobile,
 } from "./utils/celebrationIntensity";
@@ -31,6 +32,7 @@ export default function App() {
   const [started, setStarted] = useState(false);
   const [mobileMontage, setMobileMontage] = useState(false);
   const [celebrationIntensity, setCelebrationIntensity] = useState(1);
+  const [fireworkCalm, setFireworkCalm] = useState(1);
   const startedAtRef = useRef<number | null>(null);
   const isPortraitMobile = useIsMobilePortrait();
   const { beginCelebration, playSfx, playFireworkBurst, playPartyHorn, playButtonClick, playFinaleJingle, musicPlayingRef } =
@@ -61,21 +63,24 @@ export default function App() {
   }, []);
 
   const effectiveIntensity = scaleCelebrationForMobile(celebrationIntensity, isPortraitMobile);
-  const fireworksIntensity = scaleFireworksForMobile(celebrationIntensity, isPortraitMobile);
+  const fireworksIntensity =
+    scaleFireworksForMobile(celebrationIntensity, isPortraitMobile) * fireworkCalm;
 
   useEffect(() => {
     if (!started || startedAtRef.current === null || isFinale) return;
 
     const updateIntensity = () => {
+      const now = Date.now();
       setCelebrationIntensity(
-        computeCelebrationIntensity(startedAtRef.current!, Date.now(), step),
+        computeCelebrationIntensity(startedAtRef.current!, now, step),
       );
+      setFireworkCalm(fireworkCalmFactor(now - startedAtRef.current!, isPortraitMobile));
     };
 
     updateIntensity();
     const id = window.setInterval(updateIntensity, 2500);
     return () => window.clearInterval(id);
-  }, [started, step, isFinale]);
+  }, [started, step, isFinale, isPortraitMobile]);
 
   useEffect(() => {
     if (!started || startedAtRef.current === null || isFinale) return;
@@ -86,15 +91,19 @@ export default function App() {
     const schedule = () => {
       if (cancelled) return;
 
-      const intensity = scaleFireworksForMobile(
-        computeCelebrationIntensity(startedAtRef.current!, Date.now(), step),
-        isPortraitMobile,
-      );
+      const now = Date.now();
+      const elapsed = now - startedAtRef.current!;
+      const calm = fireworkCalmFactor(elapsed, isPortraitMobile);
+      const intensity =
+        scaleFireworksForMobile(
+          computeCelebrationIntensity(startedAtRef.current!, now, step),
+          isPortraitMobile,
+        ) * calm;
       const isMusicPlaying = musicPlayingRef.current;
-      const volume = fireworkVolume(intensity, isMusicPlaying, isPortraitMobile);
+      const volume = fireworkVolume(intensity, isMusicPlaying, isPortraitMobile, elapsed);
       playFireworkBurst(volume);
 
-      const delay = fireworkIntervalMs(intensity, isMusicPlaying, isPortraitMobile);
+      const delay = fireworkIntervalMs(intensity, isMusicPlaying, isPortraitMobile, elapsed);
       timeoutId = window.setTimeout(schedule, delay);
     };
 
@@ -166,7 +175,11 @@ export default function App() {
               subtle={isPortraitMobile}
             />
           </div>
-          <FireworksOverlay active={showFireworks} intensity={fireworksIntensity} />
+          <FireworksOverlay
+            active={showFireworks}
+            intensity={fireworksIntensity}
+            calmFactor={fireworkCalm}
+          />
         </>
       )}
 

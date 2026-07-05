@@ -6,19 +6,26 @@ const COLORS = ["#ff0040", "#ffe600", "#00ff66", "#ff69b4", "#9b30ff", "#0066ff"
 interface MobileFireworkSparksProps {
   active: boolean;
   intensity?: number;
+  calmFactor?: number;
 }
 
 /** Sichtbare 2D-Feuerwerk-Bursts auf Mobile (Safari-tauglich, hinter der Karte). */
-export function MobileFireworkSparks({ active, intensity = 1 }: MobileFireworkSparksProps) {
+export function MobileFireworkSparks({
+  active,
+  intensity = 1,
+  calmFactor = 1,
+}: MobileFireworkSparksProps) {
   useEffect(() => {
     if (!active) return undefined;
 
-    const level = Math.max(0.5, Math.min(1, intensity));
+    const level = Math.max(0.35, Math.min(1, intensity));
+    const calm = Math.max(0.2, calmFactor);
 
     const burst = () => {
       const x = 0.12 + Math.random() * 0.76;
+      const particleScale = Math.max(0.45, calm);
       confetti({
-        particleCount: Math.round(18 + level * 22),
+        particleCount: Math.round((18 + level * 22) * particleScale),
         angle: 90,
         spread: 48 + level * 18,
         startVelocity: 42 + level * 18,
@@ -30,10 +37,10 @@ export function MobileFireworkSparks({ active, intensity = 1 }: MobileFireworkSp
         disableForReducedMotion: true,
         zIndex: 14,
       });
-      if (Math.random() > 0.45) {
+      if (calm > 0.5 && Math.random() > 0.45) {
         window.setTimeout(() => {
           confetti({
-            particleCount: Math.round(10 + level * 14),
+            particleCount: Math.round((10 + level * 14) * particleScale),
             spread: 360,
             startVelocity: 18 + level * 12,
             origin: { x, y: 0.55 + Math.random() * 0.15 },
@@ -49,10 +56,11 @@ export function MobileFireworkSparks({ active, intensity = 1 }: MobileFireworkSp
     };
 
     burst();
-    const id = window.setInterval(burst, 1100 + (1 - level) * 900);
+    const baseMs = 1100 + (1 - level) * 900;
+    const id = window.setInterval(burst, baseMs / calm);
 
     return () => window.clearInterval(id);
-  }, [active, intensity]);
+  }, [active, intensity, calmFactor]);
 
   return null;
 }

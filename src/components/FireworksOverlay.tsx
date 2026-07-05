@@ -7,14 +7,17 @@ import { useIsMobilePortrait } from "../hooks/useIsMobile";
 interface FireworksOverlayProps {
   active: boolean;
   intensity?: number;
+  calmFactor?: number;
 }
 
-export function FireworksOverlay({ active, intensity = 1 }: FireworksOverlayProps) {
+export function FireworksOverlay({ active, intensity = 1, calmFactor = 1 }: FireworksOverlayProps) {
   const isPortraitMobile = useIsMobilePortrait();
 
   return (
     <div className={`fireworks-layer${isPortraitMobile ? " fireworks-layer--mobile" : ""}`} aria-hidden="true">
-      {isPortraitMobile && active && <MobileFireworkSparks active intensity={intensity} />}
+      {isPortraitMobile && active && (
+        <MobileFireworkSparks active intensity={intensity} calmFactor={calmFactor} />
+      )}
       <Canvas
         camera={{ position: [0, 0.5, 7.2], fov: isPortraitMobile ? 78 : 72 }}
         dpr={[1, isPortraitMobile ? 2 : 2]}
