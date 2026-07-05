@@ -653,8 +653,6 @@ button {
 .ui-layer--celebrating .gift-declined p,
 .ui-layer--celebrating .captcha-header__title,
 .ui-layer--celebrating .captcha-header__sub,
-.ui-layer--celebrating .captcha-challenge-text,
-.ui-layer--celebrating .captcha-step__instruction,
 .ui-layer--celebrating .captcha-step__error {
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.95),
@@ -1097,7 +1095,7 @@ button {
 }
 
 .ui-layer--celebrating .captcha-step__visual {
-  background: rgba(248, 250, 252, 0.5) !important;
+  background: rgba(255, 252, 245, 0.9) !important;
 }
 
 .ui-layer--celebrating .captcha-step__puzzle-area {
@@ -1162,7 +1160,6 @@ button {
   font-size: clamp(1rem, 3.5vw, 1.2rem);
   line-height: 1.55;
   user-select: none;
-  filter: blur(0.2px);
 }
 
 .captcha-challenge-text__word {
@@ -1172,14 +1169,20 @@ button {
 
 .captcha-challenge-text__char {
   display: inline-block;
+  text-shadow:
+    1px 1px 0 rgba(0, 0, 0, 0.9),
+    -1px 0 0 rgba(255, 255, 255, 0.35),
+    0 0 10px rgba(255, 255, 255, 0.25);
 }
 
 .captcha-step__instruction {
   position: relative;
   margin: 0.65rem 0 0;
-  font-size: 0.68rem;
-  color: #666;
+  font-size: 0.72rem;
+  color: #4a2a6a;
   font-style: italic;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .captcha-step__field {

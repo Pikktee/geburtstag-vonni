@@ -64,8 +64,17 @@ const REAL_FAIL_MESSAGES = [
   "Das stimmt nicht. Bitte erneut eingeben.",
 ];
 
+const CAPTCHA_TEXT_HUES = [
+  "var(--scam-blue)",
+  "var(--scam-red)",
+  "var(--scam-yellow)",
+  "var(--scam-pink)",
+  "var(--scam-purple)",
+  "var(--scam-green)",
+] as const;
+
 function CaptchaChallengeText({ text, accent }: { text: string; accent: string }) {
-  const hues = [accent, "#555", "#333", accent, "#666"];
+  const hues = [accent, ...CAPTCHA_TEXT_HUES.filter((c) => c !== accent)];
   const tokens = text.match(/(\s+|[^\s]+)/g) ?? [text];
   let charIndex = 0;
 
