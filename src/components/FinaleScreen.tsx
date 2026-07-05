@@ -34,9 +34,9 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
         id: i,
         glyph: FLOATERS[i % FLOATERS.length],
         left: 8 + Math.random() * 84,
-        delay: Math.random() * 2.5,
-        duration: 4 + Math.random() * 4,
-        drift: (Math.random() - 0.5) * 80,
+        delay: Math.random() * 4,
+        duration: 10 + Math.random() * 8,
+        drift: (Math.random() - 0.5) * 100,
       })),
     [],
   );
@@ -122,13 +122,18 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
         <motion.span
           key={f.id}
           className="finale-screen__floater"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: [0, 1, 1, 0], y: [20, -120], x: f.drift }}
+          initial={{ opacity: 0, y: "14vh", x: 0 }}
+          animate={{
+            opacity: [0, 1, 1, 0],
+            y: ["14vh", "-112vh"],
+            x: [0, f.drift],
+          }}
           transition={{
             delay: f.delay,
             duration: f.duration,
             repeat: Infinity,
-            ease: "easeOut",
+            ease: "linear",
+            opacity: { times: [0, 0.05, 0.9, 1], ease: "easeInOut" },
           }}
           style={{ left: `${f.left}%` }}
           aria-hidden="true"
@@ -138,21 +143,6 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
       ))}
 
       <div className="finale-screen__content">
-        <motion.p
-          className="finale-screen__couple"
-          initial={{ opacity: 0, scale: 0.6, filter: "blur(8px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 0.9, type: "spring", bounce: 0.45 }}
-        >
-          <span className="finale-screen__glitch" data-text="Vonnilein">
-            Vonnilein
-          </span>
-          <span className="finale-screen__heart">♥</span>
-          <span className="finale-screen__glitch finale-screen__glitch--alt" data-text="Hennilein">
-            Hennilein
-          </span>
-        </motion.p>
-
         <motion.h1
           className="finale-screen__title"
           initial={{ opacity: 0, y: 24 }}
@@ -204,16 +194,6 @@ export function FinaleScreen({ booking, koalaSrc, alpakaSrc, onPlayFinale }: Fin
         >
           Ich hab dich lieb, Vonnilein. Happy Birthday. 💕
         </motion.p>
-
-        <motion.div
-          className="finale-screen__neon"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0.4, 1, 0.55, 1] }}
-          transition={{ delay: 1.4, duration: 2.2, repeat: Infinity }}
-          aria-hidden="true"
-        >
-          ✦ Happy Birthday Vonnie ✦
-        </motion.div>
       </div>
     </div>
   );

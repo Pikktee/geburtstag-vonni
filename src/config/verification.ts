@@ -60,6 +60,7 @@ export const VERIFICATION_QUESTIONS: VerificationQuestion[] = [
     type: "sliding-puzzle",
     label:
       "Bringe Vonnilein und Hennilein wieder zusammen — ordne die neun Kacheln in die richtige Reihenfolge!",
-    wrongHint: "Noch nicht ganz! Schieb die Kacheln weiter, bis Koala und Alpaka wieder ein Paar sind.",
+    wrongHint:
+      "GRAUSAM!!! Du hast Koala und Alpaka auseinandergerissen — ein Liebespaar zerrissen wie ein billiger Scam! Schieb die Kacheln weiter, bis die beiden wieder zusammen sind, DU BÖSEWICHT!!!",
   },
 ];
