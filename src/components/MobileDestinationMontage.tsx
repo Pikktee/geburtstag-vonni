@@ -8,17 +8,29 @@ const SLIDE_MS = 620;
 interface MobileDestinationMontageProps {
   imagePaths: Record<string, string>;
   onComplete: () => void;
+  onSlideReveal?: (slideIndex: number) => void;
 }
 
-export function MobileDestinationMontage({ imagePaths, onComplete }: MobileDestinationMontageProps) {
+export function MobileDestinationMontage({
+  imagePaths,
+  onComplete,
+  onSlideReveal,
+}: MobileDestinationMontageProps) {
   const [index, setIndex] = useState(0);
   const total = LOCATION_IMAGES.length;
   const done = index >= total;
   const currentId = !done ? LOCATION_IMAGES[index] : null;
+  const remaining = total - index;
+  const countdownLabel = done ? "LOS!!!" : String(remaining);
+
+  useEffect(() => {
+    if (done) return;
+    onSlideReveal?.(index);
+  }, [index, done, onSlideReveal]);
 
   useEffect(() => {
     if (done) {
-      const id = window.setTimeout(onComplete, 380);
+      const id = window.setTimeout(onComplete, 480);
       return () => window.clearTimeout(id);
     }
     const id = window.setTimeout(() => setIndex((i) => i + 1), SLIDE_MS);
@@ -52,13 +64,28 @@ export function MobileDestinationMontage({ imagePaths, onComplete }: MobileDesti
         )}
       </AnimatePresence>
 
-      <div className="mobile-montage__progress" aria-hidden="true">
-        {LOCATION_IMAGES.map((id, i) => (
-          <span
-            key={id}
-            className={`mobile-montage__dot${i <= index ? " mobile-montage__dot--on" : ""}`}
-          />
-        ))}
+      <div className="mobile-montage__countdown" aria-live="polite" aria-atomic="true">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={countdownLabel}
+            className="mobile-montage__countdown-burst"
+            initial={{ scale: 0.25, rotate: -14, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            exit={{ scale: 1.35, rotate: 8, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 520, damping: 16 }}
+          >
+            <span
+              className={`mobile-montage__countdown-num${done ? " mobile-montage__countdown-num--go" : ""}`}
+            >
+              {countdownLabel}
+            </span>
+            {!done && (
+              <span className="mobile-montage__countdown-label blink">
+                {remaining === 1 ? "LETZTES ZIEL!!!" : "GEHEIME ZIELE ÜBRIG!!!"}
+              </span>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <p className="mobile-montage__hint">Wohin geht die Reise? Gleich erfährst du mehr…</p>

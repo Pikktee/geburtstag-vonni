@@ -169,7 +169,25 @@ export default function App() {
       )}
 
       {mobileMontage && (
-        <MobileDestinationMontage imagePaths={imagePaths} onComplete={handleMontageComplete} />
+        <MobileDestinationMontage
+          imagePaths={imagePaths}
+          onComplete={handleMontageComplete}
+          onSlideReveal={(slideIndex) => {
+            const montageSfx = [
+              "firework-whistle",
+              "firework-crackle",
+              "confetti-pop",
+              "party-whoosh",
+              "fireworks",
+            ] as const;
+            const key = montageSfx[slideIndex % montageSfx.length];
+            const volume = 0.5 + slideIndex * 0.05;
+            playSfx(key, volume, 30);
+            if (slideIndex === 0) {
+              window.setTimeout(() => playFireworkBurst(0.36), 90);
+            }
+          }}
+        />
       )}
 
       {!started && !mobileMontage && (
