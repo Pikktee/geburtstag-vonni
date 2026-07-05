@@ -461,18 +461,39 @@ button {
   .gift-flow {
     justify-content: flex-start;
     min-height: auto;
-    padding-top: calc(var(--marquee-height) + 0.45rem);
-    padding-bottom: calc(var(--marquee-height) + 1.25rem);
+    padding-top: calc(var(--marquee-height) + 0.9rem);
+    padding-bottom: calc(var(--marquee-height) + 1.65rem);
   }
 
   .gift-flow--compact {
-    padding-top: calc(var(--marquee-height) + 0.35rem);
-    padding-bottom: calc(var(--marquee-height) + 1rem);
+    padding-top: calc(var(--marquee-height) + 0.75rem);
+    padding-bottom: calc(var(--marquee-height) + 1.35rem);
   }
 
   .gift-flow__panel {
     flex-shrink: 0;
-    margin-bottom: 0.35rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .calendar-picker__frame {
+    padding: 0.65rem 0.35rem;
+  }
+
+  .rdp-root {
+    --rdp-day-height: 30px;
+    --rdp-day-width: 30px;
+    font-size: 0.82rem;
+  }
+
+  .rdp-month_caption {
+    font-size: 0.95rem;
+  }
+
+  .rdp-button_previous,
+  .rdp-button_next {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .identity-captcha {
@@ -805,6 +826,38 @@ button {
 
 .rdp-today:not(.rdp-selected) .rdp-day_button {
   border: 2px solid var(--scam-yellow);
+}
+
+.calendar-picker {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-picker__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.85rem 0.55rem;
+  border-radius: 8px;
+  border: 2px dashed var(--scam-pink);
+}
+
+.rdp-root {
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.rdp-month {
+  max-width: 100%;
+}
+
+.rdp-month_grid {
+  width: 100%;
+  max-width: 100%;
 }
 
 .gift-flow {

@@ -36,15 +36,7 @@ export function CalendarPicker({ onConfirm }: CalendarPickerProps) {
         🐨 Wann passt es dir, Vonnilein?
       </p>
 
-      <div
-        style={{
-          display: "inline-block",
-          background: "rgba(0,0,0,0.4)",
-          padding: "1rem",
-          borderRadius: "8px",
-          border: "2px dashed var(--scam-pink)",
-        }}
-      >
+      <div className="calendar-picker__frame">
         <DayPicker
           mode="single"
           selected={selected}
